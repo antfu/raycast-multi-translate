@@ -1,4 +1,8 @@
-# Raycast MutliTranslate
+<p align="center">
+<img src="https://github.com/antfu/raycast-multi-translate/blob/main/assets/icon.png?raw=true" width="100" height="100" align="center" />
+</p>
+
+<h1 align="center">MultiTranslate</sup></h1>
 
 A Raycast extension that translates text to multiple languages at once.
 

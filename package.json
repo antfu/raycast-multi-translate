@@ -1,15 +1,15 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "translate",
+  "name": "multitranslate",
   "title": "MultiTranslate",
   "private": true,
   "packageManager": "pnpm@8.6.1",
-  "description": "Automatic multiple translation using Google Translate",
+  "description": "Translates text to multiple languages at once",
   "author": "antfu",
   "license": "MIT",
   "categories": [
-    "Web",
-    "Productivity"
+    "Productivity",
+    "Communication"
   ],
   "icon": "icon.png",
   "contributors": [
@@ -22,7 +22,7 @@
     {
       "name": "translate",
       "title": "MultiTranslate",
-      "description": "Automatic multiple translation",
+      "description": "Translate to multiple languages",
       "mode": "view"
     }
   ],
