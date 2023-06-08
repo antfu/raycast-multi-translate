@@ -38,6 +38,8 @@ export default function Translate(): ReactElement {
     },
   )
 
+  const singleSource = new Set(results?.map(i => i.from)).size === 1
+
   return (
     <List
       searchBarPlaceholder={systemSelection || 'Enter text to translate'}
@@ -47,13 +49,14 @@ export default function Translate(): ReactElement {
       isShowingDetail={isShowingDetail}
     >
       {results?.map((item, index) => {
-        if (item.from === item.to && item.translated.trim().toLowerCase() === item.original.trim().toLowerCase())
+        if (singleSource && item.from === item.to && item.translated.trim().toLowerCase() === item.original.trim().toLowerCase())
           return null
+
         return (
           <List.Item
             key={index}
             title={item.translated}
-            accessories={[{ text: `${item.from} -> ${item.to}` }]}
+            accessories={[{ text: singleSource ? item.to : `${item.from} -> ${item.to}` }]}
             detail={<TranslateDetail item={item} />}
             actions={
               <ActionPanel>
