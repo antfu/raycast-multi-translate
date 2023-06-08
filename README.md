@@ -34,6 +34,12 @@ You will need to have [Node.js](https://nodejs.org) and [pnpm](https://pnpm.io/)
 
 There is **no plan** to publish to the bloated [raycast/extensions](https://github.com/raycast/extensions) until they make a decentralized publishing system.
 
+## Settings
+
+Options can be found in the extensions tab of Raycast settings. You can set up to 7 languages to translate to.
+
+<img width="1112" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/797a83ea-6013-4cef-82fe-dfc5d309aada">
+
 ## Features
 
 ### Source Language Detection

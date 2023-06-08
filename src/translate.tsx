@@ -8,7 +8,7 @@ import { getLanguageName, languagesByCode } from './languages'
 import type { TranslateResult } from './translator'
 import { translate, translateAll } from './translator'
 
-const langReg = new RegExp(`>(${Object.keys(languagesByCode).join('|')})$`, 'i')
+const langReg = new RegExp(`[>:/](${Object.keys(languagesByCode).join('|')})$`, 'i')
 
 export default function Translate(): ReactElement {
   const langs = useTargetLanguages()
