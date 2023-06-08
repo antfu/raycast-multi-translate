@@ -20,16 +20,13 @@ export function useLanguages() {
   }, [])
 }
 
-export function useTextState() {
+export function useSelectionState() {
   const [text, setText] = React.useState('')
-  const textRef = React.useRef(text)
-  textRef.current = text
 
   React.useEffect(() => {
     getSelectedText()
       .then((cbText) => {
-        if (!textRef.current)
-          setText(cbText ?? '')
+        setText(cbText ?? '')
       })
       .catch((err) => {
         console.error('Error:', err)

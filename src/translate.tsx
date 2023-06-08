@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 import React, { useState } from 'react'
 import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
-import { useDebouncedValue, useLanguages, useTextState } from './hooks'
+import { useDebouncedValue, useLanguages, useSelectionState } from './hooks'
 import type { LanguageCode } from './languages'
 import { supportedLanguagesByCode } from './languages'
 
@@ -13,11 +13,12 @@ const langReg = new RegExp(`>(${Object.keys(supportedLanguagesByCode).join('|')}
 
 export default function Translate(): ReactElement {
   const langs = useLanguages()
-  const [isShowingDetail, setIsShowingDetail] = useState(false)
-  const [rawText, setText] = useTextState()
+  const [isShowingDetail, setIsShowingDetail] = useState(true)
+  const [rawText, setText] = useState('')
+  const [systemSelection] = useSelectionState()
 
   let langFrom: LanguageCode = 'auto'
-  const text = rawText.replace(langReg, (_, lang) => {
+  const text = (rawText || systemSelection).replace(langReg, (_, lang) => {
     langFrom = lang.toLowerCase()
     return ''
   }).trim()
@@ -40,7 +41,7 @@ export default function Translate(): ReactElement {
 
   return (
     <List
-      searchBarPlaceholder="Enter text to translate"
+      searchBarPlaceholder={systemSelection ? `"${systemSelection}"` : 'Enter text to translate'}
       searchText={rawText}
       onSearchTextChange={setText}
       isLoading={isLoading}
