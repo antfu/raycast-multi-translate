@@ -4,7 +4,7 @@ import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
 import { useDebouncedValue, useSystemSelection, useTargetLanguages } from './hooks'
 import type { LanguageCode } from './languages'
-import { languagesByCode } from './languages'
+import { getLanguageName, languagesByCode } from './languages'
 import type { TranslateResult } from './translator'
 import { translate, translateAll } from './translator'
 
@@ -85,12 +85,37 @@ function TranslateDetail({ item }: { item: TranslateResult }): ReactElement {
     [item.translated, item.to, item.from],
   )
 
-  let markdown = `${item.translated}\n\n----\n`
+  let markdown = item.translated
+  if (translatedBack) {
+    if (translatedBack.translated !== item.original)
+      markdown += `\n\n------\n\n${translatedBack.translated}`
+  }
 
-  if (isLoading)
-    markdown += '*Loading...*'
-  else if (translatedBack)
-    markdown += translatedBack.translated
-
-  return (<List.Item.Detail markdown={markdown} />)
+  return (<List.Item.Detail
+    markdown={markdown}
+    metadata={
+      <List.Item.Detail.Metadata>
+        <List.Item.Detail.Metadata.Label title="From" text={getLanguageName(item.from)} />
+        <List.Item.Detail.Metadata.Label title="To" text={getLanguageName(item.to)} />
+        <List.Item.Detail.Metadata.Separator />
+        <List.Item.Detail.Metadata.Label
+          title="Translate Back"
+          text={
+            isLoading
+              ? 'Loading...'
+              : translatedBack?.translated === item.original
+                ? 'Same'
+                : 'Different'
+          }
+          icon={
+            isLoading
+              ? Icon.CircleProgress
+              : translatedBack?.translated === item.original
+                ? Icon.Checkmark
+                : Icon.Info
+            }
+        />
+      </List.Item.Detail.Metadata>
+    }
+  />)
 }

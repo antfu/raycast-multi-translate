@@ -11,3 +11,7 @@ export interface LanguagesItem {
 
 export const languagesByCode = _languages as Record<LanguageCode, LanguagesItem>
 export const languages: LanguagesItem[] = Object.values(languagesByCode)
+
+export function getLanguageName(code: LanguageCode) {
+  return languagesByCode[code]?.name || code
+}
