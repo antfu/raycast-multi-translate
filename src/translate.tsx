@@ -47,7 +47,7 @@ export default function Translate(): ReactElement {
       isShowingDetail={isShowingDetail}
     >
       {results?.map((item, index) => {
-        if (item.from === item.to && item.translated === item.original)
+        if (item.from === item.to && item.translated.trim().toLowerCase() === item.original.trim().toLowerCase())
           return null
         return (
           <List.Item
@@ -91,6 +91,8 @@ function TranslateDetail({ item }: { item: TranslateResult }): ReactElement {
       markdown += `\n\n------\n\n${translatedBack.translated}`
   }
 
+  const isTheSame = translatedBack && translatedBack.translated.trim().toLowerCase() === item.original.trim().toLowerCase()
+
   return (<List.Item.Detail
     markdown={markdown}
     metadata={
@@ -103,14 +105,14 @@ function TranslateDetail({ item }: { item: TranslateResult }): ReactElement {
           text={
             isLoading
               ? 'Loading...'
-              : translatedBack?.translated === item.original
+              : isTheSame
                 ? 'Same'
                 : 'Different'
           }
           icon={
             isLoading
               ? Icon.CircleProgress
-              : translatedBack?.translated === item.original
+              : isTheSame
                 ? Icon.Checkmark
                 : Icon.Info
             }
