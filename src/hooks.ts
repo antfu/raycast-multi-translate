@@ -26,7 +26,7 @@ export function useSelectionState() {
   React.useEffect(() => {
     getSelectedText()
       .then((cbText) => {
-        setText(cbText ?? '')
+        setText((cbText ?? '').trim())
       })
       .catch((err) => {
         console.error('Error:', err)

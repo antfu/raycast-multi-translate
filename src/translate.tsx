@@ -14,20 +14,20 @@ const langReg = new RegExp(`>(${Object.keys(supportedLanguagesByCode).join('|')}
 export default function Translate(): ReactElement {
   const langs = useLanguages()
   const [isShowingDetail, setIsShowingDetail] = useState(true)
-  const [rawText, setText] = useState('')
+  const [input, setInput] = useState('')
   const [systemSelection] = useSelectionState()
 
   let langFrom: LanguageCode = 'auto'
-  const text = (rawText || systemSelection).replace(langReg, (_, lang) => {
+  const sourceText = (input.trim() || systemSelection).replace(langReg, (_, lang) => {
     langFrom = lang.toLowerCase()
     return ''
   }).trim()
 
-  const debouncedValue = useDebouncedValue(text, 500)
+  const debouncedText = useDebouncedValue(sourceText, 500)
 
   const { data: results, isLoading } = usePromise(
     multipleWayTranslate,
-    [debouncedValue, langFrom, langs],
+    [debouncedText, langFrom, langs],
     {
       onError(error) {
         showToast({
@@ -42,8 +42,8 @@ export default function Translate(): ReactElement {
   return (
     <List
       searchBarPlaceholder={systemSelection ? `"${systemSelection}"` : 'Enter text to translate'}
-      searchText={rawText}
-      onSearchTextChange={setText}
+      searchText={input}
+      onSearchTextChange={setInput}
       isLoading={isLoading}
       isShowingDetail={isShowingDetail}
     >
@@ -76,7 +76,7 @@ export default function Translate(): ReactElement {
                        }&tl=${
                        r.langTo
                        }&text=${
-                       encodeURIComponent(debouncedValue)
+                       encodeURIComponent(debouncedText)
                        }&op=translate`
                     }
                   />
