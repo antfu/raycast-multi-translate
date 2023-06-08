@@ -32,7 +32,9 @@ export async function simpleTranslate(text: string, options: LanguageCodeSet): P
     return {
       originalText: text,
       translatedText: translated.text,
-      langFrom: translated?.from?.language?.iso as LanguageCode,
+      langFrom: translated?.from?.language?.didYouMean
+        ? options.langFrom
+        : translated?.from?.language?.iso as LanguageCode,
       langTo: options.langTo,
     }
   }
@@ -53,6 +55,17 @@ export async function simpleTranslate(text: string, options: LanguageCodeSet): P
 
     throw err
   }
+}
+
+export async function multipleWayTranslate(text: string, from: LanguageCode = 'auto', languages: LanguageCode[]) {
+  if (!text)
+    return []
+
+  return (await Promise.all(languages.map(async lang => simpleTranslate(text, {
+    langFrom: from,
+    langTo: lang,
+  }),
+  )))
 }
 
 export async function doubleWayTranslate(text: string, options: LanguageCodeSet) {

@@ -2,19 +2,31 @@ import type { ReactElement } from 'react'
 import React, { useState } from 'react'
 import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
-import { useDebouncedValue, useSelectedLanguagesSet, useTextState } from './hooks'
+import { useDebouncedValue, useLanguages, useTextState } from './hooks'
+import type { LanguageCode } from './languages'
 import { supportedLanguagesByCode } from './languages'
-import { LanguageManagerListDropdown } from './LanguagesManager'
-import { doubleWayTranslate } from './simple-translate'
+
+// import { LanguageManagerListDropdown } from "./LanguagesManager";
+import { multipleWayTranslate } from './simple-translate'
+
+const langReg = new RegExp(`>(${Object.keys(supportedLanguagesByCode).join('|')})$`, 'i')
 
 export default function Translate(): ReactElement {
-  const [selectedLanguageSet] = useSelectedLanguagesSet()
+  const langs = useLanguages()
   const [isShowingDetail, setIsShowingDetail] = useState(false)
-  const [text, setText] = useTextState()
+  const [rawText, setText] = useTextState()
+
+  let langFrom: LanguageCode = 'auto'
+  const text = rawText.replace(langReg, (_, lang) => {
+    langFrom = lang.toLowerCase()
+    return ''
+  }).trim()
+
   const debouncedValue = useDebouncedValue(text, 500)
+
   const { data: results, isLoading } = usePromise(
-    doubleWayTranslate,
-    [debouncedValue, selectedLanguageSet],
+    multipleWayTranslate,
+    [debouncedValue, langFrom, langs],
     {
       onError(error) {
         showToast({
@@ -29,16 +41,15 @@ export default function Translate(): ReactElement {
   return (
     <List
       searchBarPlaceholder="Enter text to translate"
-      searchText={text}
+      searchText={rawText}
       onSearchTextChange={setText}
       isLoading={isLoading}
       isShowingDetail={isShowingDetail}
-      searchBarAccessory={<LanguageManagerListDropdown />}
     >
       {results?.map((r, index) => {
         const langFrom = supportedLanguagesByCode[r.langFrom]
         const langTo = supportedLanguagesByCode[r.langTo]
-        const languages = `${langFrom.flag ?? langFrom.code} -> ${langTo.flag ?? langTo.code}`
+        const languages = `${langFrom.code} -> ${langTo.code}`
 
         return (
           <List.Item

@@ -2,9 +2,22 @@ import React from 'react'
 import { getPreferenceValues, getSelectedText } from '@raycast/api'
 import { useCachedState } from '@raycast/utils'
 import type { LanguageCodeSet, TranslatePreferences } from './types'
+import type { LanguageCode } from './languages'
 
 export function usePreferences() {
   return React.useMemo(() => getPreferenceValues<TranslatePreferences>(), [])
+}
+
+export function useLanguages() {
+  return React.useMemo(() => {
+    const pref = getPreferenceValues<TranslatePreferences>()
+    const langs = Object.entries(pref)
+      .filter(([key]) => key.startsWith('lang'))
+      .sort(([key1], [key2]) => key1.localeCompare(key2))
+      .map(([_, value]) => value)
+      .filter(i => i && i !== 'none' && i !== 'auto')
+    return Array.from(new Set(langs)) as LanguageCode[]
+  }, [])
 }
 
 export function useTextState() {
