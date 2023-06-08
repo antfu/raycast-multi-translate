@@ -28,6 +28,14 @@
   ],
   "preferences": [
     {
+      "name": "getSystemSelection",
+      "type": "checkbox",
+      "label": "Get text selection",
+      "default": true,
+      "required": false,
+      "description": "Automatically get current text selection and translate"
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",

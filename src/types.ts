@@ -1,8 +1,7 @@
 import type { LanguageCode } from './languages'
 
-export interface LanguageCodeSet { langFrom: LanguageCode; langTo: LanguageCode }
-
 export interface TranslatePreferences {
+  getSystemSelection: boolean
   lang1: LanguageCode
   lang2: LanguageCode
   lang3?: LanguageCode

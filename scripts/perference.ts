@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 
 (async () => {
   const pkg = JSON.parse(await fs.readFile('./package.json', 'utf-8'))
-  const languages = JSON.parse(await fs.readFile('./src/supportedLanguages.json', 'utf-8'))
+  const languages = JSON.parse(await fs.readFile('./src/languages.json', 'utf-8'))
 
   const LANGUAGES = 7
 
@@ -40,6 +40,13 @@ import fs from 'node:fs/promises'
   })
 
   pkg.preferences = [
+    {
+      name: 'getSystemSelection',
+      type: 'checkbox',
+      default: true,
+      label: 'Read system text selection',
+      description: 'Automatically get current text selection and translate',
+    },
     ...langs,
   ]
 
