@@ -34,7 +34,8 @@ You will need to have [Node.js](https://nodejs.org) and [pnpm](https://pnpm.io/)
 1. Clone this repo `git clone https://github.com/antfu/raycast-multi-translate`
 2. Go to the folder `cd raycast-multi-translate`
 3. Install dependencies `pnpm install`
-4. Go to Raycast, run `Import Extension` and select the folder
+4. Run build `pnpm build`
+5. Go to Raycast, run `Import Extension` and select the folder
 
 There is **no plan** to publish to the bloated [raycast/extensions](https://github.com/raycast/extensions) until they make a decentralized publishing system.
 
