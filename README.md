@@ -14,15 +14,28 @@ I speak Chinese, work in English, live in France, and sometimes also consume Jap
 - Removed the representation of flag emojis, as languages are not countries
 - Removed the `Translate From` command, and the language selection dropdown, as they are automatized
 - Show details view by default
+- Cache translation results
 - Make "Use current selection" passive and don't interfere the input field
 
 ## Installation
 
-Currently you need to clone this repo and install it locally in developer mode.
+Currently, you need to clone this repo and install it locally in developer mode.
+
+You will need to have [Node.js](https://nodejs.org) and [pnpm](https://pnpm.io/) installed.
+
+1. Clone this repo `git clone https://github.com/antfu/raycast-multi-translate`
+2. Go to the folder `cd raycast-multi-translate`
+3. Install dependencies `pnpm install`
+4. Go to Raycast, run `Import Extension` and select the folder
 
 There is **no plan** to publish to the bloated [raycast/extensions](https://github.com/raycast/extensions) until they make a decentralized publishing system.
 
+## Features
+
+### Source Language Detection
+
+By default we send the text to Google Translate and let it detect the source language automatically. In some cases, it might not be accrute because different works in different languages can spell the same. For example, `ours` in French means `bear`, but in English it means `belonging to us`. In this case, if you want to translate `ours` in French, you can add `>fr` to the end of the text to force the source language to be French.
+
 ## TODO
 
-- [ ] Verify by translating back
 - [ ] Integrate with the dictionary plugin to correct the spelling

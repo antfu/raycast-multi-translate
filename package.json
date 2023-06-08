@@ -2,6 +2,8 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "translate",
   "title": "MultiTranslate",
+  "private": true,
+  "packageManager": "pnpm@8.6.1",
   "description": "Automatic multiple translation using Google Translate",
   "author": "antfu",
   "license": "MIT",
@@ -3142,12 +3144,14 @@
     "build": "ray build -e dist",
     "dev": "ray develop",
     "publish": "ray publish",
+    "postinstall": "pnpm run build",
     "lint": "eslint ."
   },
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
-    "@raycast/api": "^1.53.0",
-    "@raycast/utils": "^1.7.1"
+    "@raycast/api": "^1.53.1",
+    "@raycast/utils": "^1.7.1",
+    "lru-cache": "^9.1.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",

@@ -1,6 +1,5 @@
 import React from 'react'
 import { getPreferenceValues, getSelectedText } from '@raycast/api'
-import { useCachedState } from '@raycast/utils'
 import type { LanguageCodeSet, TranslatePreferences } from './types'
 import type { LanguageCode } from './languages'
 
@@ -8,7 +7,7 @@ export function usePreferences() {
   return React.useMemo(() => getPreferenceValues<TranslatePreferences>(), [])
 }
 
-export function useLanguages() {
+export function useTargetLanguages() {
   return React.useMemo(() => {
     const pref = getPreferenceValues<TranslatePreferences>()
     const langs = Object.entries(pref)
@@ -20,7 +19,7 @@ export function useLanguages() {
   }, [])
 }
 
-export function useSelectionState() {
+export function useSystemSelection() {
   const [text, setText] = React.useState('')
 
   React.useEffect(() => {
@@ -28,22 +27,10 @@ export function useSelectionState() {
       .then((cbText) => {
         setText((cbText ?? '').trim())
       })
-      .catch((err) => {
-        console.error('Error:', err)
-      })
+      .catch(() => {})
   }, [])
 
   return [text, setText] as const
-}
-
-export function useSelectedLanguagesSet() {
-  const preferences = usePreferences()
-  const [selectedLanguageSet, setSelectedLanguageSet] = useCachedState<LanguageCodeSet>('selectedLanguageSet', {
-    langFrom: preferences.lang1,
-    langTo: preferences.lang2,
-  })
-
-  return [selectedLanguageSet, setSelectedLanguageSet] as const
 }
 
 export function usePreferencesLanguageSet() {

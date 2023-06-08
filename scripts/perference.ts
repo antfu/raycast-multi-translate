@@ -13,7 +13,7 @@ import fs from 'node:fs/promises'
     }
   }).slice(1)
 
-  pkg.preferences = Array.from({ length: LANGUAGES }, (_, i) => {
+  const langs = Array.from({ length: LANGUAGES }, (_, i) => {
     return {
       name: `lang${i + 1}`,
       type: 'dropdown',
@@ -38,6 +38,10 @@ import fs from 'node:fs/promises'
           }),
     }
   })
+
+  pkg.preferences = [
+    ...langs,
+  ]
 
   await fs.writeFile('./package.json', JSON.stringify(pkg, null, 2))
 })()

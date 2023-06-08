@@ -2,20 +2,19 @@ import type { ReactElement } from 'react'
 import React, { useState } from 'react'
 import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
-import { useDebouncedValue, useLanguages, useSelectionState } from './hooks'
+import { useDebouncedValue, useSystemSelection, useTargetLanguages } from './hooks'
 import type { LanguageCode } from './languages'
-import { supportedLanguagesByCode } from './languages'
+import { languagesByCode } from './languages'
+import type { TranslateResult } from './translator'
+import { translate, translateAll } from './translator'
 
-// import { LanguageManagerListDropdown } from "./LanguagesManager";
-import { multipleWayTranslate } from './simple-translate'
-
-const langReg = new RegExp(`>(${Object.keys(supportedLanguagesByCode).join('|')})$`, 'i')
+const langReg = new RegExp(`>(${Object.keys(languagesByCode).join('|')})$`, 'i')
 
 export default function Translate(): ReactElement {
-  const langs = useLanguages()
+  const langs = useTargetLanguages()
   const [isShowingDetail, setIsShowingDetail] = useState(true)
   const [input, setInput] = useState('')
-  const [systemSelection] = useSelectionState()
+  const [systemSelection] = useSystemSelection()
 
   let langFrom: LanguageCode = 'auto'
   const sourceText = (input.trim() || systemSelection).replace(langReg, (_, lang) => {
@@ -26,7 +25,7 @@ export default function Translate(): ReactElement {
   const debouncedText = useDebouncedValue(sourceText, 500)
 
   const { data: results, isLoading } = usePromise(
-    multipleWayTranslate,
+    translateAll,
     [debouncedText, langFrom, langs],
     {
       onError(error) {
@@ -41,27 +40,25 @@ export default function Translate(): ReactElement {
 
   return (
     <List
-      searchBarPlaceholder={systemSelection ? `"${systemSelection}"` : 'Enter text to translate'}
+      searchBarPlaceholder={systemSelection || 'Enter text to translate'}
       searchText={input}
       onSearchTextChange={setInput}
       isLoading={isLoading}
       isShowingDetail={isShowingDetail}
     >
-      {results?.map((r, index) => {
-        const langFrom = supportedLanguagesByCode[r.langFrom]
-        const langTo = supportedLanguagesByCode[r.langTo]
-        const languages = `${langFrom.code} -> ${langTo.code}`
-
+      {results?.map((item, index) => {
+        if (item.from === item.to && item.translated === item.original)
+          return null
         return (
           <List.Item
             key={index}
-            title={r.translatedText}
-            accessories={[{ text: languages }]}
-            detail={<List.Item.Detail markdown={r.translatedText} />}
+            title={item.translated}
+            accessories={[{ text: `${item.from} -> ${item.to}` }]}
+            detail={<TranslateDetail item={item} />}
             actions={
               <ActionPanel>
                 <ActionPanel.Section>
-                  <Action.CopyToClipboard title="Copy" content={r.translatedText} />
+                  <Action.CopyToClipboard title="Copy" content={item.translated} />
                   <Action
                     title="Toggle Full Text"
                     icon={Icon.Text}
@@ -70,15 +67,7 @@ export default function Translate(): ReactElement {
                   <Action.OpenInBrowser
                     title="Open in Google Translate"
                     shortcut={{ modifiers: ['opt'], key: 'enter' }}
-                    url={
-                      `https://translate.google.com/?sl=${
-                      r.langFrom
-                       }&tl=${
-                       r.langTo
-                       }&text=${
-                       encodeURIComponent(debouncedText)
-                       }&op=translate`
-                    }
+                    url={`https://translate.google.com/?sl=${item.from}&tl=${item.to}&text=${encodeURIComponent(item.original)}&op=translate`}
                   />
                 </ActionPanel.Section>
               </ActionPanel>
@@ -88,4 +77,20 @@ export default function Translate(): ReactElement {
       })}
     </List>
   )
+}
+
+function TranslateDetail({ item }: { item: TranslateResult }): ReactElement {
+  const { data: translatedBack, isLoading } = usePromise(
+    translate,
+    [item.translated, item.to, item.from],
+  )
+
+  let markdown = `${item.translated}\n\n----\n`
+
+  if (isLoading)
+    markdown += '*Loading...*'
+  else if (translatedBack)
+    markdown += translatedBack.translated
+
+  return (<List.Item.Detail markdown={markdown} />)
 }

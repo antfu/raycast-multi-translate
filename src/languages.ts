@@ -1,10 +1,6 @@
-import _supportedLanguagesByCode from './supportedLanguagesByCode.json'
-import _supportedLanguagesByCountry from './supportedLanguages.json'
+import _languages from './languages.json'
 
-export type LanguagesMapByCountry = typeof _supportedLanguagesByCountry
-export type LanguageCountries = keyof LanguagesMapByCountry
-
-export type LanguagesMapByCode = typeof _supportedLanguagesByCode
+export type LanguagesMapByCode = typeof _languages
 export type LanguageCode = keyof LanguagesMapByCode
 
 export interface LanguagesItem {
@@ -13,7 +9,5 @@ export interface LanguagesItem {
   flag?: string
 }
 
-export const supportedLanguagesByCode = _supportedLanguagesByCode as Record<LanguageCode, LanguagesItem>
-export const supportedLanguagesByCountry = _supportedLanguagesByCountry as Record<LanguageCountries, LanguagesItem>
-
-export const languages: LanguagesItem[] = Object.values(supportedLanguagesByCountry)
+export const languagesByCode = _languages as Record<LanguageCode, LanguagesItem>
+export const languages: LanguagesItem[] = Object.values(languagesByCode)

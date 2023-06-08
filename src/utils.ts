@@ -1,4 +1,4 @@
-import { supportedLanguagesByCode } from './languages'
+import { languagesByCode } from './languages'
 import type { LanguageCodeSet } from './types'
 
 export function isSameLanguageSet(langSet1: LanguageCodeSet, langSet2: LanguageCodeSet) {
@@ -7,8 +7,8 @@ export function isSameLanguageSet(langSet1: LanguageCodeSet, langSet2: LanguageC
 
 export function getLanguageSetObjects(languageSet: LanguageCodeSet) {
   return {
-    langFrom: supportedLanguagesByCode[languageSet.langFrom],
-    langTo: supportedLanguagesByCode[languageSet.langTo],
+    langFrom: languagesByCode[languageSet.langFrom],
+    langTo: languagesByCode[languageSet.langTo],
   }
 }
 

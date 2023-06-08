@@ -9,11 +9,14 @@ dependencies:
     specifier: ^2.0.1
     version: 2.0.1
   '@raycast/api':
-    specifier: ^1.53.0
-    version: 1.53.0(@types/node@16.18.34)(@types/react@18.2.9)
+    specifier: ^1.53.1
+    version: 1.53.1(@types/node@16.18.34)(@types/react@18.2.9)
   '@raycast/utils':
     specifier: ^1.7.1
-    version: 1.7.1(@raycast/api@1.53.0)
+    version: 1.7.1(@raycast/api@1.53.1)
+  lru-cache:
+    specifier: ^9.1.2
+    version: 9.1.2
 
 devDependencies:
   '@antfu/eslint-config':
@@ -236,8 +239,8 @@ packages:
       fastq: 1.15.0
     dev: true
 
-  /@raycast/api@1.53.0(@types/node@16.18.34)(@types/react@18.2.9):
-    resolution: {integrity: sha512-OMrLyxT3BCmKduAM7l//Ejw40BqkCrr1yw3I7HYjvKqk3LOjqPWuJK3eqCLg9tFPXiTAn6smSNvXMJb8S619jw==}
+  /@raycast/api@1.53.1(@types/node@16.18.34)(@types/react@18.2.9):
+    resolution: {integrity: sha512-qqB2jZyCD0fx1UUGjCCSlyflzft3XiV4uxqYhdIpNpdL/UHig7Y4V/pSMCL8tBpVd4J3odXljgHOAlQpOjQkJw==}
     hasBin: true
     requiresBuild: true
     peerDependencies:
@@ -255,12 +258,12 @@ packages:
       react-reconciler: 0.28.0(react@18.1.0)
     dev: false
 
-  /@raycast/utils@1.7.1(@raycast/api@1.53.0):
+  /@raycast/utils@1.7.1(@raycast/api@1.53.1):
     resolution: {integrity: sha512-7cymMfbqLFWD6mvNPM4qwoLUddR0q06i3SjIAlWORV3HU/7KBSTOth2Eehpe384LQFfnsp9yLvw1pzEMuWRwtw==}
     peerDependencies:
       '@raycast/api': '>=1.52.0'
     dependencies:
-      '@raycast/api': 1.53.0(@types/node@16.18.34)(@types/react@18.2.9)
+      '@raycast/api': 1.53.1(@types/node@16.18.34)(@types/react@18.2.9)
       content-type: 1.0.5
       cross-fetch: 3.1.6
       dequal: 2.0.3
@@ -1766,6 +1769,11 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /lru-cache@9.1.2:
+    resolution: {integrity: sha512-ERJq3FOzJTxBbFjZ7iDs+NiK4VI9Wz+RdrrAB8dio1oV+YvdPzUEE4QNiT2VD51DkIbCYRUUzCRkssXCHqSnKQ==}
+    engines: {node: 14 || >=16.14}
+    dev: false
 
   /mdast-util-from-markdown@0.8.5:
     resolution: {integrity: sha512-2hkTXtYYnr+NubD/g6KGBS/0mFmBcifAsI0yIWRiRo0PjVs6SSOSOdtzbp6kSGnShDN6G5aWZpKQ2lWRy27mWQ==}
