@@ -1,10 +1,10 @@
-import React from "react";
-import { Action, ActionPanel, Color, Icon, List, showToast, Toast, useNavigation } from "@raycast/api";
-import { useCachedState } from "@raycast/utils";
-import { LanguageCodeSet } from "../types";
-import { isSameLanguageSet, usePreferencesLanguageSet, useSelectedLanguagesSet } from "../hooks";
-import { AddLanguageForm } from "./AddLanguageForm";
-import { formatLanguageSet, getLanguageSetObjects } from "../utils";
+import React from 'react'
+import { Action, ActionPanel, Color, Icon, List, Toast, showToast, useNavigation } from '@raycast/api'
+import { useCachedState } from '@raycast/utils'
+import type { LanguageCodeSet } from '../types'
+import { isSameLanguageSet, usePreferencesLanguageSet, useSelectedLanguagesSet } from '../hooks'
+import { formatLanguageSet, getLanguageSetObjects } from '../utils'
+import { AddLanguageForm } from './AddLanguageForm'
 
 export function LanguagesManagerItem({
   languageSet,
@@ -12,16 +12,16 @@ export function LanguagesManagerItem({
   onDelete,
   selected,
 }: {
-  languageSet: LanguageCodeSet;
-  onSelect: () => void;
-  onDelete?: () => void;
-  selected?: boolean;
+  languageSet: LanguageCodeSet
+  onSelect: () => void
+  onDelete?: () => void
+  selected?: boolean
 }) {
-  const { langFrom, langTo } = getLanguageSetObjects(languageSet);
+  const { langFrom, langTo } = getLanguageSetObjects(languageSet)
 
   return (
     <List.Item
-      subtitle={`${langFrom.flag ?? "🏳"} -> ${langTo.flag ?? "🏳"}`}
+      subtitle={`${langFrom.flag ?? '🏳'} -> ${langTo.flag ?? '🏳'}`}
       title={`${langFrom.name} -> ${langTo.name}`}
       keywords={[langFrom.name, langFrom.code, langTo.name, langTo.code]}
       accessories={selected ? [{ icon: { tintColor: Color.Green, source: Icon.Checkmark } }] : undefined}
@@ -32,7 +32,7 @@ export function LanguagesManagerItem({
         </ActionPanel>
       }
     />
-  );
+  )
 }
 
 export const SaveCurrentLanguageSet: React.FC<{ languageSet: LanguageCodeSet; onSelect: () => void }> = ({
@@ -50,14 +50,14 @@ export const SaveCurrentLanguageSet: React.FC<{ languageSet: LanguageCodeSet; on
         </ActionPanel>
       }
     />
-  );
-};
+  )
+}
 
 export const LanguagesManagerList: React.VFC = () => {
-  const navigation = useNavigation();
-  const preferencesLanguageSet = usePreferencesLanguageSet();
-  const [selectedLanguageSet, setSelectedLanguageSet] = useSelectedLanguagesSet();
-  const [languages, setLanguages] = useCachedState<LanguageCodeSet[]>("languages", []);
+  const navigation = useNavigation()
+  const preferencesLanguageSet = usePreferencesLanguageSet()
+  const [selectedLanguageSet, setSelectedLanguageSet] = useSelectedLanguagesSet()
+  const [languages, setLanguages] = useCachedState<LanguageCodeSet[]>('languages', [])
 
   return (
     <List
@@ -77,9 +77,9 @@ export const LanguagesManagerList: React.VFC = () => {
               target={
                 <AddLanguageForm
                   onAddLanguage={(langSet) => {
-                    setLanguages([...languages, langSet]);
-                    navigation.pop();
-                    showToast(Toast.Style.Success, "Language set was saved!", formatLanguageSet(langSet));
+                    setLanguages([...languages, langSet])
+                    navigation.pop()
+                    showToast(Toast.Style.Success, 'Language set was saved!', formatLanguageSet(langSet))
                   }}
                 />
               }
@@ -87,36 +87,36 @@ export const LanguagesManagerList: React.VFC = () => {
           </ActionPanel>
         }
       />
-      {!languages.some((l) => isSameLanguageSet(l, selectedLanguageSet)) &&
-        !isSameLanguageSet(preferencesLanguageSet, selectedLanguageSet) && (
+      {!languages.some(l => isSameLanguageSet(l, selectedLanguageSet))
+        && !isSameLanguageSet(preferencesLanguageSet, selectedLanguageSet) && (
           <SaveCurrentLanguageSet
             languageSet={selectedLanguageSet}
             onSelect={() => setLanguages([...languages, selectedLanguageSet])}
           />
-        )}
+      )}
       <LanguagesManagerItem
         languageSet={preferencesLanguageSet}
         onSelect={() => {
-          setSelectedLanguageSet(preferencesLanguageSet);
-          navigation.pop();
+          setSelectedLanguageSet(preferencesLanguageSet)
+          navigation.pop()
         }}
         selected={isSameLanguageSet(selectedLanguageSet, preferencesLanguageSet)}
       />
-      {languages.map((langSet) => (
+      {languages.map(langSet => (
         <LanguagesManagerItem
           key={`${langSet.langFrom} ${langSet.langTo}`}
           selected={isSameLanguageSet(selectedLanguageSet, langSet)}
           languageSet={langSet}
           onSelect={() => {
-            setSelectedLanguageSet(langSet);
-            navigation.pop();
+            setSelectedLanguageSet(langSet)
+            navigation.pop()
           }}
           onDelete={() => {
-            setLanguages(languages.filter((l) => !isSameLanguageSet(l, langSet)));
-            showToast(Toast.Style.Success, "Language set was deleted!", formatLanguageSet(langSet));
+            setLanguages(languages.filter(l => !isSameLanguageSet(l, langSet)))
+            showToast(Toast.Style.Success, 'Language set was deleted!', formatLanguageSet(langSet))
           }}
         />
       ))}
     </List>
-  );
-};
+  )
+}

@@ -1,20 +1,21 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "translate",
+  "packageManager": "pnpm@8.6.1",
   "title": "Google Translate",
   "description": "Simple translation using Google Translate",
-  "icon": "google-translate.png",
   "author": "gebeto",
+  "license": "MIT",
   "categories": [
     "Web",
     "Productivity"
   ],
+  "icon": "google-translate.png",
   "contributors": [
     "FezVrasta",
     "metakirby5",
     "AlanHuang"
   ],
-  "license": "MIT",
   "commands": [
     {
       "name": "translate",
@@ -921,25 +922,22 @@
       "description": "Second language"
     }
   ],
-  "dependencies": {
-    "@iamtraction/google-translate": "^2.0.1",
-    "@raycast/api": "^1.47.3",
-    "@raycast/utils": "^1.4.16"
-  },
-  "devDependencies": {
-    "@types/node": "~16.10.0",
-    "@types/react": "^17.0.28",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "typescript": "^4.4.3"
-  },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop",
-    "fix-lint": "ray lint --fix",
-    "lint": "ray lint",
-    "publish": "ray publish"
+    "publish": "ray publish",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@iamtraction/google-translate": "^2.0.1",
+    "@raycast/api": "^1.53.0",
+    "@raycast/utils": "^1.7.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.39.5",
+    "@types/node": "~16.18.34",
+    "@types/react": "^18.2.9",
+    "eslint": "^8.42.0",
+    "typescript": "^5.1.3"
   }
 }

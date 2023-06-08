@@ -1,2 +1,2 @@
-export * from "./LanguagesManagerList";
-export * from "./LanguagesManagerListDropdown";
+export * from './LanguagesManagerList'
+export * from './LanguagesManagerListDropdown'
