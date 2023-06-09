@@ -11,7 +11,7 @@ import { TranslateDetail } from './TranslateDetail'
 
 const langReg = new RegExp(`[>:/](${Object.keys(languagesByCode).join('|')})$`, 'i')
 
-export default function Main(): ReactElement {
+export function Main(): ReactElement {
   const langs = useTargetLanguages()
   const [isShowingDetail, setIsShowingDetail] = useState(true)
   const [input, setInput] = useState('')
