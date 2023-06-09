@@ -6,7 +6,8 @@ import type { LanguageCode } from '../data/languages'
 import { languagesByCode } from '../data/languages'
 import { translateAll } from '../logic/translator'
 import { useDebouncedValue, useSystemSelection, useTargetLanguages } from '../logic/hooks'
-import { SpellcheckItem } from './SpellingCheckItem'
+import { unicodeTransform } from '../logic/text'
+import { SpellcheckItem } from './SpellcheckItem'
 import { TranslateDetail } from './TranslateDetail'
 
 const langReg = new RegExp(`[>:/](${Object.keys(languagesByCode).join('|')})$`, 'i')
@@ -71,6 +72,7 @@ export function Main(): ReactElement {
     >
       <SpellcheckItem
         text={sourceText}
+        // TODO: how to React?
         // onMismatch={() => setHasSpellcheck(true)}
       />
       {results?.map((item, index) => {
@@ -79,7 +81,11 @@ export function Main(): ReactElement {
             key={index}
             id={item.to}
             title={item.translated}
-            accessories={[{ text: singleSource ? item.to : `${item.from} -> ${item.to}` }]}
+            accessories={[{
+              text: singleSource
+                ? unicodeTransform(item.to.toUpperCase(), 'small_caps')
+                : `${unicodeTransform(item.from.toUpperCase(), 'small_caps')} -> ${unicodeTransform(item.to.toUpperCase(), 'small_caps')}`,
+            }]}
             detail={<TranslateDetail item={item} />}
             actions={
               <ActionPanel>

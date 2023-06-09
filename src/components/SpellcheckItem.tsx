@@ -45,9 +45,12 @@ export function SpellcheckItem({ text, onMismatch }: { text: string; onMismatch?
     <List.Item
       key="spellcheck"
       id="spellcheck"
-      icon={Icon.SpeechBubbleImportant}
+      icon={{
+        value: Icon.TextInput,
+        tooltip: 'Spellcheck',
+      }}
       title={result}
-      accessories={[{ tag: 'spellcheck' }]}
+      // accessories={[{ tag: { value: 'spell', color: Color.Yellow } }]}
       detail={<List.Item.Detail markdown={markdown} />}
       actions={
         <ActionPanel>
