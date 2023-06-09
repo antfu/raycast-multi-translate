@@ -29,6 +29,7 @@ Temporary Items
 ## Build generated
 build/
 DerivedData/
+assets/spellcheck
 
 ### Node ###
 # Logs

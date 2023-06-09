@@ -1,13 +1,17 @@
+import { chmodSync } from 'node:fs'
 import { join } from 'node:path'
-import { execaNode } from 'execa'
+import { execa } from 'execa'
 import { environment } from '@raycast/api'
+
+const filepath = join(environment.assetsPath, 'spellcheck')
+// Raycast will copy assets without execute permission
+chmodSync(filepath, 0o755)
 
 export async function correctSpelling(text: string) {
   // We use a sub process here because Raycast
   // does not support bundling native bindings
-  const filepath = join(environment.assetsPath, 'spellcheck.cjs')
   try {
-    const result = await execaNode(filepath, [text])
+    const result = await execa(filepath, [text])
     return result.stdout
   }
   catch (e) {

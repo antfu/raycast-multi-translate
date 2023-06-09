@@ -41,7 +41,7 @@ export default function Main(): ReactElement {
   const singleSource = fromLangs.size === 1
 
   return (
-    <List searchBarPlaceholder={systemSelection || 'Enter text to translate'} searchText={input} onSearchTextChange={setInput} isLoading={isLoading} isShowingDetail={isShowingDetail}>
+    <List searchBarPlaceholder={systemSelection || 'Enter text to translate'} searchText={input} onSearchTextChange={setInput} isLoading={isLoading} isShowingDetail={isShowingDetail} throttle>
       <SpellingCheckItem text={sourceText} />
       {results?.map((item, index) => {
         if (singleSource && item.from === item.to && item.translated.trim().toLowerCase() === item.original.trim().toLowerCase())
