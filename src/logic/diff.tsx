@@ -45,13 +45,13 @@ export async function getDiffSvg(from: string, to: string): Promise<string> {
                   ? '#F9666620'
                   : 'transparent'
               return (
-              <span
-                key={idx}
-                style={{
-                  color,
-                  backgroundColor: background,
-                  whiteSpace: 'pre',
-                }}
+                <span
+                  key={idx}
+                  style={{
+                    color,
+                    backgroundColor: background,
+                    whiteSpace: 'pre',
+                  }}
                >{diff.value}</span>
               )
             })}

@@ -41,7 +41,14 @@ export default function Main(): ReactElement {
   const singleSource = fromLangs.size === 1
 
   return (
-    <List searchBarPlaceholder={systemSelection || 'Enter text to translate'} searchText={input} onSearchTextChange={setInput} isLoading={isLoading} isShowingDetail={isShowingDetail} throttle>
+    <List
+      searchBarPlaceholder={systemSelection || 'Enter text to translate'}
+      searchText={input}
+      onSearchTextChange={setInput}
+      isLoading={isLoading}
+      isShowingDetail={isShowingDetail}
+      throttle
+    >
       <SpellingCheckItem text={sourceText} />
       {results?.map((item, index) => {
         if (singleSource && item.from === item.to && item.translated.trim().toLowerCase() === item.original.trim().toLowerCase())
@@ -56,7 +63,10 @@ export default function Main(): ReactElement {
             actions={
               <ActionPanel>
                 <ActionPanel.Section>
-                  <Action.CopyToClipboard title="Copy" content={item.translated} />
+                  <Action.CopyToClipboard
+                    title="Copy"
+                    content={item.translated}
+                  />
                   <Action title="Toggle Full Text" icon={Icon.Text} onAction={() => setIsShowingDetail(!isShowingDetail)} />
                   <Action.OpenInBrowser
                     title="Open in Google Translate"
