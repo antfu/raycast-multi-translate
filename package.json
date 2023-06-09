@@ -3162,7 +3162,9 @@
     "@raycast/utils": "^1.7.1",
     "diff": "^5.1.0",
     "execa": "^7.1.1",
-    "lru-cache": "^9.1.2"
+    "lru-cache": "^9.1.2",
+    "satori": "^0.10.1",
+    "spellchecker": "^3.7.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
@@ -3173,9 +3175,6 @@
     "eslint": "^8.42.0",
     "esno": "^0.16.3",
     "fs-extra": "^11.1.1",
-    "run-applescript": "^6.1.0",
-    "satori": "^0.10.1",
-    "spellchecker": "^3.7.1",
     "typescript": "^5.1.3"
   }
 }
