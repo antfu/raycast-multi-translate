@@ -1,7 +1,6 @@
 import _languages from './languages.json'
 
-export type LanguagesMapByCode = typeof _languages
-export type LanguageCode = keyof LanguagesMapByCode
+export type LanguageCode = keyof typeof _languages
 
 export interface LanguagesItem {
   code: LanguageCode

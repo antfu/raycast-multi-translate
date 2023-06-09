@@ -1,7 +1,7 @@
 import { getPreferenceValues, getSelectedText } from '@raycast/api'
 import React from 'react'
-import type { LanguageCode } from './languages'
-import type { TranslatePreferences } from './types'
+import type { TranslatePreferences } from '../types'
+import type { LanguageCode } from '../data/languages'
 
 export function usePreferences() {
   return React.useMemo(() => getPreferenceValues<TranslatePreferences>(), [])

@@ -3153,6 +3153,7 @@
     "dev": "ray develop",
     "publish": "ray publish",
     "postinstall": "pnpm run build",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "prepare": "esno scripts/prepare.ts"
   },

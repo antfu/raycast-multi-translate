@@ -1,4 +1,6 @@
-import type { LanguageCode } from './languages'
+import type { LanguageCode } from './data/languages'
+
+export { LanguageCode }
 
 export interface TranslatePreferences {
   getSystemSelection: boolean

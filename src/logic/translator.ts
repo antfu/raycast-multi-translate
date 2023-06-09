@@ -1,6 +1,6 @@
 import googleTranslate from '@iamtraction/google-translate'
 import { LRUCache } from 'lru-cache'
-import type { LanguageCode } from './languages'
+import type { LanguageCode } from '../data/languages'
 
 export const AUTO_DETECT = 'auto'
 

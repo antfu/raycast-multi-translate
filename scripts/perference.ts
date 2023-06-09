@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 
 (async () => {
   const pkg = JSON.parse(await fs.readFile('./package.json', 'utf-8'))
-  const languages = JSON.parse(await fs.readFile('./src/languages.json', 'utf-8'))
+  const languages = JSON.parse(await fs.readFile('./src/data/languages.json', 'utf-8'))
 
   const LANGUAGES = 7
 
