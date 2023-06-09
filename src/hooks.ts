@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { getPreferenceValues, getSelectedText } from '@raycast/api'
 import type { TranslatePreferences } from './types'
 import type { LanguageCode } from './languages'
@@ -19,17 +19,28 @@ export function useTargetLanguages() {
   }, [])
 }
 
+export const useIsMountedRef = () => {
+  const isMountedRef = useRef(false)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+  return isMountedRef
+}
 export function useSystemSelection() {
   const [text, setText] = React.useState('')
   const preferences = usePreferences()
-
+  const isMountedRef = useIsMountedRef()
   React.useEffect(() => {
     if (!preferences.getSystemSelection) {
       return
     }
     getSelectedText()
       .then((cbText) => {
-        setText((cbText ?? '').trim())
+        if (isMountedRef.current) setText((cbText ?? '').trim())
       })
       .catch(() => {})
   }, [preferences.getSystemSelection])
