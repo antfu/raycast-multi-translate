@@ -71,7 +71,6 @@ export async function getDiffSvg(from: string, to: string): Promise<string> {
           fonts: [
             {
               name: 'Roboto',
-              // TODO:
               data: await font,
               weight: 400,
               style: 'normal',
