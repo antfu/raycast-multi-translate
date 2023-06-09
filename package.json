@@ -3153,19 +3153,28 @@
     "dev": "ray develop",
     "publish": "ray publish",
     "postinstall": "pnpm run build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "esno scripts/prepare.ts"
   },
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
     "@raycast/api": "^1.53.1",
     "@raycast/utils": "^1.7.1",
+    "diff": "^5.1.0",
+    "execa": "^7.1.1",
     "lru-cache": "^9.1.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
+    "@types/diff": "^5.0.3",
+    "@types/fs-extra": "^11.0.1",
     "@types/node": "~16.18.34",
     "@types/react": "^18.2.9",
     "eslint": "^8.42.0",
+    "fs-extra": "^11.1.1",
+    "run-applescript": "^6.1.0",
+    "satori": "^0.10.1",
+    "spellchecker": "^3.7.1",
     "typescript": "^5.1.3"
   }
 }

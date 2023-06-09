@@ -72,5 +72,5 @@ export async function translateAll(text: string, from: LanguageCode = 'auto', la
   if (!text)
     return []
 
-  return (await Promise.all(languages.map(async to => translate(text, from, to))))
+  return (await Promise.all(languages.map(async to => translate(text, from, to)))).filter(i => i.translated)
 }
