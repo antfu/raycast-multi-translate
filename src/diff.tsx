@@ -14,7 +14,9 @@ export async function getDiffSvg(from: string, to: string): Promise<string> {
   if (!diffCache.has(cacheKey)) {
     diffCache.set(cacheKey, (async () => {
       const diffs = diffChars(from, to)
-      const foregroundColor = 'white' // TODO: based on color mode
+      const foregroundColor = environment.appearance === 'light'
+        ? 'black'
+        : 'white'
 
       const svg = await satori(
         <div style={{
