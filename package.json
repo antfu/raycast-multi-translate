@@ -3164,8 +3164,7 @@
     "diff": "^5.1.0",
     "execa": "^7.1.1",
     "lru-cache": "^9.1.2",
-    "satori": "^0.10.1",
-    "spellchecker": "^3.7.1"
+    "satori": "^0.10.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
