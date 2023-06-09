@@ -33,16 +33,18 @@ export const useIsMountedRef = () => {
 export function useSystemSelection() {
   const [text, setText] = React.useState('')
   const preferences = usePreferences()
-  const isMountedRef = useIsMountedRef()
   React.useEffect(() => {
     if (!preferences.getSystemSelection) {
       return
     }
+    let isCancelled = false;
     getSelectedText()
       .then((cbText) => {
-        if (isMountedRef.current) setText((cbText ?? '').trim())
+        if (isCancelled) setText((cbText ?? '').trim())
       })
       .catch(() => {})
+      
+    return () => { isCancelled = true };
   }, [preferences.getSystemSelection])
 
   return [text, setText] as const
