@@ -1,12 +1,12 @@
 import type { ReactElement } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
 import type { LanguageCode } from '../data/languages'
 import { languagesByCode } from '../data/languages'
 import { translateAll } from '../logic/translator'
 import { useDebouncedValue, useSystemSelection, useTargetLanguages } from '../logic/hooks'
-import { SpellingCheckItem } from './SpellingCheckItem'
+import { SpellcheckItem } from './SpellingCheckItem'
 import { TranslateDetail } from './TranslateDetail'
 
 const langReg = new RegExp(`[>:/](${Object.keys(languagesByCode).join('|')})$`, 'i')
@@ -16,6 +16,8 @@ export function Main(): ReactElement {
   const [isShowingDetail, setIsShowingDetail] = useState(true)
   const [input, setInput] = useState('')
   const [systemSelection] = useSystemSelection()
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
+  // const [hasSpellcheck, setHasSpellcheck] = useState(false)
 
   let langFrom: LanguageCode = 'auto'
   const sourceText = (input.trim() || systemSelection)
@@ -37,6 +39,11 @@ export function Main(): ReactElement {
     },
   })
 
+  // reset selection when results change
+  useEffect(() => {
+    setSelectedId(undefined)
+  }, [results])
+
   const fromLangs = new Set(results?.map(i => i.from))
   const singleSource = fromLangs.size === 1
 
@@ -48,6 +55,10 @@ export function Main(): ReactElement {
       isLoading={isLoading}
       isShowingDetail={isShowingDetail}
       throttle
+      selectedItemId={selectedId}
+      onSelectionChange={(item) => {
+        setSelectedId(item ?? undefined)
+      }}
       actions={
         <ActionPanel>
           <Action.OpenInBrowser
@@ -58,14 +69,15 @@ export function Main(): ReactElement {
         </ActionPanel>
       }
     >
-      <SpellingCheckItem text={sourceText} />
+      <SpellcheckItem
+        text={sourceText}
+        // onMismatch={() => setHasSpellcheck(true)}
+      />
       {results?.map((item, index) => {
-        if (singleSource && item.from === item.to && item.translated.trim().toLowerCase() === item.original.trim().toLowerCase())
-          return null
-
         return (
           <List.Item
             key={index}
+            id={item.to}
             title={item.translated}
             accessories={[{ text: singleSource ? item.to : `${item.from} -> ${item.to}` }]}
             detail={<TranslateDetail item={item} />}

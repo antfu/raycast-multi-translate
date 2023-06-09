@@ -1,13 +1,14 @@
 import type { ReactElement } from 'react'
-import { Action, ActionPanel, List } from '@raycast/api'
+import { useEffect } from 'react'
+import { Action, ActionPanel, Icon, List } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
-import { correctSpelling } from '../logic/spellcheck'
+import { spellcheck } from '../logic/spellcheck'
 import { getDiffSvg } from '../logic/diff'
 
-export function SpellingCheckItem({ text }: { text: string }): ReactElement | null {
-  const { data: spellingCheck } = usePromise(
+export function SpellcheckItem({ text, onMismatch }: { text: string; onMismatch?: Function }): ReactElement | null {
+  const { data: result } = usePromise(
     async (text: string) => {
-      const corrected = await correctSpelling(text)
+      const corrected = await spellcheck(text)
       if (!corrected || corrected === text)
         return
       return corrected
@@ -21,30 +22,37 @@ export function SpellingCheckItem({ text }: { text: string }): ReactElement | nu
         return
       return await getDiffSvg(from, to)
     },
-    [text, spellingCheck],
+    [text, result],
   )
+
+  useEffect(() => {
+    if (result)
+      onMismatch?.(result)
+  }, [result])
 
   let markdown = ''
   const padding = ''
-  if (spellingCheck) {
-    markdown = `###### ${padding}Did you mean:\n\n${padding}${spellingCheck}`
+  if (result) {
+    markdown = `###### ${padding}Did you mean:\n\n${padding}${result}`
     if (diffSvg)
       markdown += `\n\n###### ${padding}Diff ![](${diffSvg})`
   }
 
-  if (!spellingCheck)
+  if (!result)
     return null
 
   return (
     <List.Item
-      key="spelling"
-      title={spellingCheck}
+      key="spellcheck"
+      id="spellcheck"
+      icon={Icon.SpeechBubbleImportant}
+      title={result}
       accessories={[{ tag: 'spellcheck' }]}
       detail={<List.Item.Detail markdown={markdown} />}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.CopyToClipboard title="Copy" content={spellingCheck} />
+            <Action.CopyToClipboard title="Copy" content={result} />
           </ActionPanel.Section>
         </ActionPanel>
       }

@@ -21,8 +21,8 @@ export function TranslateDetail({ item }: { item: TranslateResult }): ReactEleme
       markdown={markdown}
       metadata={
         <List.Item.Detail.Metadata>
-          <List.Item.Detail.Metadata.Label title="From" text={getLanguageName(item.from)} />
-          <List.Item.Detail.Metadata.Label title="To" text={getLanguageName(item.to)} />
+          <List.Item.Detail.Metadata.Label title="From" text={`${getLanguageName(item.from)} [${item.from}]`} />
+          <List.Item.Detail.Metadata.Label title="To" text={`${getLanguageName(item.to)} [${item.to}]`} />
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label
             title="Translate Back"
