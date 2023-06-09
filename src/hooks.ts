@@ -14,7 +14,7 @@ export function useTargetLanguages() {
       .filter(([key]) => key.startsWith('lang'))
       .sort(([key1], [key2]) => key1.localeCompare(key2))
       .map(([_, value]) => value)
-      .filter(i => i && i !== 'none' && i !== 'auto')
+      .filter((i) => i && i !== 'none' && i !== 'auto')
     return Array.from(new Set(langs)) as LanguageCode[]
   }, [])
 }
@@ -23,15 +23,16 @@ export function useSystemSelection() {
   const [text, setText] = React.useState('')
   const preferences = usePreferences()
 
-  if (preferences.getSystemSelection) {
-    React.useEffect(() => {
-      getSelectedText()
-        .then((cbText) => {
-          setText((cbText ?? '').trim())
-        })
-        .catch(() => {})
-    }, [])
-  }
+  React.useEffect(() => {
+    if (!preferences.getSystemSelection) {
+      return
+    }
+    getSelectedText()
+      .then((cbText) => {
+        setText((cbText ?? '').trim())
+      })
+      .catch(() => {})
+  }, [preferences.getSystemSelection])
 
   return [text, setText] as const
 }
