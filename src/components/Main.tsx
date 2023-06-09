@@ -48,6 +48,15 @@ export default function Main(): ReactElement {
       isLoading={isLoading}
       isShowingDetail={isShowingDetail}
       throttle
+      actions={
+        <ActionPanel>
+          <Action.OpenInBrowser
+            title="Open GitHub"
+            url={'https://github.com/antfu/raycast-multi-translate'}
+            icon={Icon.Code}
+          />
+        </ActionPanel>
+      }
     >
       <SpellingCheckItem text={sourceText} />
       {results?.map((item, index) => {
@@ -73,6 +82,11 @@ export default function Main(): ReactElement {
                     shortcut={{ modifiers: ['opt'], key: 'enter' }}
                     url={`https://translate.google.com/?sl=${item.from}&tl=${item.to}&text=${encodeURIComponent(item.original)}&op=translate`}
                   />
+                  <Action.OpenInBrowser
+                    title="Open in Google Search"
+                    url={`https://google.com/?s=${encodeURIComponent(item.original)}`}
+                  />
+
                 </ActionPanel.Section>
               </ActionPanel>
             }
