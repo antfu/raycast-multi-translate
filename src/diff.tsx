@@ -1,13 +1,25 @@
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 import os from 'node:os'
 import { join } from 'node:path'
 import satori from 'satori'
 import { diffChars } from 'diff'
 import { environment } from '@raycast/api'
 
+const dir = join(os.tmpdir(), 'raycast-multi-translate')
 const diffCache = new Map<string, Promise<string>>()
+const font = fs.readFile(join(environment.assetsPath, 'RobotoMono-Regular.ttf'))
+
+let init = false
 
 export async function getDiffSvg(from: string, to: string): Promise<string> {
+  if (init === false) {
+    init = true
+    try {
+      await fs.rm(dir, { recursive: true, force: true })
+    }
+    catch (e) {}
+  }
+
   const cacheKey = `${from}=>${to}`
 
   if (!diffCache.has(cacheKey)) {
@@ -60,7 +72,7 @@ export async function getDiffSvg(from: string, to: string): Promise<string> {
             {
               name: 'Roboto',
               // TODO:
-              data: fs.readFileSync(join(environment.assetsPath, 'RobotoMono-Regular.ttf')),
+              data: await font,
               weight: 400,
               style: 'normal',
             },
@@ -69,10 +81,10 @@ export async function getDiffSvg(from: string, to: string): Promise<string> {
       )
 
       const name = Math.random().toString(36).substring(7)
-      const dir = os.tmpdir()
+      await fs.mkdir(dir, { recursive: true })
       const path = `${dir}/${name}.svg`
 
-      fs.writeFileSync(path, svg, 'utf-8')
+      await fs.writeFile(path, svg, 'utf-8')
       return path
     })())
   }
