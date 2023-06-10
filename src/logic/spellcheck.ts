@@ -7,15 +7,15 @@ const filepath = join(environment.assetsPath, 'spellcheck')
 // Raycast will copy assets without execute permission
 chmodSync(filepath, 0o755)
 
-export async function spellcheck(text: string) {
+export async function spellcheck(text: string): Promise<string | false> {
   // We use a sub process here because Raycast
   // does not support bundling native bindings
   try {
-    const result = await execa(filepath, [text])
-    return result.stdout
+    const { stdout: corrected } = await execa(filepath, [text])
+    return text === corrected ? false : corrected
   }
   catch (e) {
     console.error(e)
-    return text
+    return false
   }
 }

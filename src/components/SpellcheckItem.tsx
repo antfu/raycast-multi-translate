@@ -1,45 +1,21 @@
-import type { ReactElement } from 'react'
-import { useEffect } from 'react'
 import { Action, ActionPanel, Icon, List } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
-import { spellcheck } from '../logic/spellcheck'
 import { getDiffSvg } from '../logic/diff'
 
-export function SpellcheckItem({ text, onMismatch }: { text: string; onMismatch?: Function }): ReactElement | null {
-  const { data: result } = usePromise(
-    async (text: string) => {
-      const corrected = await spellcheck(text)
-      if (!corrected || corrected === text)
-        return
-      return corrected
-    },
-    [text],
-  )
-
+export function SpellcheckItem({ text, corrected }: { text: string; corrected: string }) {
   const { data: diffSvg } = usePromise(
     async (from: string, to?: string) => {
       if (!to)
         return
       return await getDiffSvg(from, to)
     },
-    [text, result],
+    [text, corrected],
   )
 
-  useEffect(() => {
-    if (result)
-      onMismatch?.(result)
-  }, [result])
-
-  let markdown = ''
   const padding = ''
-  if (result) {
-    markdown = `###### ${padding}Did you mean:\n\n${padding}${result}`
-    if (diffSvg)
-      markdown += `\n\n###### ${padding}Diff ![](${diffSvg})`
-  }
-
-  if (!result)
-    return null
+  let markdown = `###### ${padding}Did you mean:\n\n${padding}${corrected}`
+  if (diffSvg)
+    markdown += `\n\n###### ${padding}Diff ![](${diffSvg})`
 
   return (
     <List.Item
@@ -49,13 +25,13 @@ export function SpellcheckItem({ text, onMismatch }: { text: string; onMismatch?
         value: Icon.TextInput,
         tooltip: 'Spellcheck',
       }}
-      title={result}
+      title={corrected}
       // accessories={[{ tag: { value: 'spell', color: Color.Yellow } }]}
       detail={<List.Item.Detail markdown={markdown} />}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.CopyToClipboard title="Copy" content={result} />
+            <Action.CopyToClipboard title="Copy" content={corrected} />
           </ActionPanel.Section>
         </ActionPanel>
       }
