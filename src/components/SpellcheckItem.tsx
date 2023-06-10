@@ -13,7 +13,7 @@ export function SpellcheckItem({ text, corrected }: { text: string; corrected: s
   )
 
   const padding = ''
-  let markdown = `###### ${padding}Did you mean:\n\n${padding}${corrected}`
+  let markdown = `###### ${padding}Did you mean\n\n${padding}${corrected}`
   if (diffSvg)
     markdown += `\n\n###### ${padding}Diff ![](${diffSvg})`
 
@@ -22,11 +22,10 @@ export function SpellcheckItem({ text, corrected }: { text: string; corrected: s
       key="spellcheck"
       id="spellcheck"
       icon={{
-        value: Icon.TextInput,
+        value: Icon.QuestionMarkCircle,
         tooltip: 'Spellcheck',
       }}
       title={corrected}
-      // accessories={[{ tag: { value: 'spell', color: Color.Yellow } }]}
       detail={<List.Item.Detail markdown={markdown} />}
       actions={
         <ActionPanel>

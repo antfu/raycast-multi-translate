@@ -21,32 +21,38 @@ export function Main(): ReactElement {
   const [selectedId, setSelectedId] = useState<string>()
 
   const [userLangFrom, setUserLangFrom] = useState<LanguageCode>()
-  const [langFrom, setLangFrom] = useState<LanguageCode>('auto')
+  const [inlineLangFrom, setInlineLangFrom] = useState<LanguageCode>('auto')
 
   const rawSourceText = (input.trim() || systemSelection)
   const sourceText = rawSourceText
     .replace(langReg, (_, lang) => {
       const _lang = lang.toLowerCase()
-      if (_lang !== langFrom)
-        setLangFrom(_lang)
+      if (_lang !== inlineLangFrom)
+        setInlineLangFrom(_lang)
       return ''
     })
     .trim()
 
-  if (rawSourceText === sourceText && langFrom !== 'auto')
-    setLangFrom('auto')
+  if (rawSourceText === sourceText && inlineLangFrom !== 'auto')
+    setInlineLangFrom('auto')
+
+  const langFrom = userLangFrom ?? inlineLangFrom
 
   const debouncedText = useDebouncedValue(sourceText, 500)
 
-  const { data: results, isLoading } = usePromise(translateAll, [debouncedText, langFrom, langs], {
-    onError(error) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: 'Could not translate',
-        message: error.toString(),
-      })
-    },
-  })
+  const { data: results, isLoading } = usePromise(
+    translateAll,
+    [debouncedText, langFrom, langs],
+    {
+      onError(error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: 'Could not translate',
+          message: error.toString(),
+        })
+      },
+    })
+
   const { data: correctedText } = usePromise(spellcheck, [debouncedText])
 
   // reset selection when results change
@@ -63,7 +69,7 @@ export function Main(): ReactElement {
       searchBarAccessory={
         <List.Dropdown
           tooltip='Source language'
-          value={userLangFrom ?? langFrom}
+          value={langFrom}
           onChange={(v) => {
             if (v === 'auto')
               setUserLangFrom(undefined)
