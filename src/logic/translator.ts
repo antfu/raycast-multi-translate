@@ -15,7 +15,18 @@ const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
 })
 
-export class TranslateError extends Error {}
+export class TranslateError extends Error {
+  constructor(message?: string | Error, name?: string) {
+    if (message instanceof Error) {
+      super(message.message)
+      this.name = name || message.name
+    }
+    else {
+      super(message)
+      this.name = name || this.name
+    }
+  }
+}
 
 export async function translate(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
   if (!text) {
@@ -51,17 +62,12 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
   }
   catch (err) {
     if (err instanceof Error) {
-      if (err.name === 'TooManyRequestsError') {
-        const error = new TranslateError()
-        error.name = 'Too many requests'
-        error.message = 'please try again later'
-        throw error
+      switch (err.name) {
+        case 'TooManyRequestsError':
+          throw new TranslateError('please try again later', 'Too many requests')
+        default:
+          throw new TranslateError(err)
       }
-
-      const error = new TranslateError()
-      error.name = err.name
-      error.message = err.message
-      throw error
     }
 
     throw err

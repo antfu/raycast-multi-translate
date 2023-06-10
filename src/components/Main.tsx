@@ -64,7 +64,7 @@ export function Main(): ReactElement {
         <ActionPanel>
           <Action.OpenInBrowser
             title="Open GitHub"
-            url={'https://github.com/antfu/raycast-multi-translate'}
+            url="https://github.com/antfu/raycast-multi-translate"
             icon={Icon.Code}
           />
         </ActionPanel>
@@ -104,7 +104,6 @@ export function Main(): ReactElement {
                     title="Open in Google Search"
                     url={`https://google.com/?s=${encodeURIComponent(item.original)}`}
                   />
-
                 </ActionPanel.Section>
               </ActionPanel>
             }

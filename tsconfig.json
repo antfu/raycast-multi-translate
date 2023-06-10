@@ -1,6 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src/**/*"],
   "compilerOptions": {
     "lib": ["es2020"],
     "module": "commonjs",
