@@ -5,7 +5,7 @@ import { usePromise } from '@raycast/utils'
 import type { LanguageCode } from '../data/languages'
 import { languagesByCode } from '../data/languages'
 import { translateAll } from '../logic/translator'
-import { useDebouncedValue, useSystemSelection, useTargetLanguages } from '../logic/hooks'
+import { targetLanguages, useDebouncedValue, useSystemSelection } from '../logic/hooks'
 import { unicodeTransform } from '../logic/text'
 import { spellcheck } from '../logic/spellcheck'
 import { SpellcheckItem } from './SpellcheckItem'
@@ -14,7 +14,7 @@ import { TranslateDetail } from './TranslateDetail'
 const langReg = new RegExp(`[>:/](${Object.keys(languagesByCode).join('|')})$`, 'i')
 
 export function Main(): ReactElement {
-  const langs = useTargetLanguages()
+  const langs = targetLanguages
   const [isShowingDetail, setIsShowingDetail] = useState(true)
   const [input, setInput] = useState('')
   const [systemSelection] = useSystemSelection()
@@ -65,7 +65,7 @@ export function Main(): ReactElement {
         <ActionPanel>
           <Action.OpenInBrowser
             title="Open GitHub"
-            url={'https://github.com/antfu/raycast-multi-translate'}
+            url="https://github.com/antfu/raycast-multi-translate"
             icon={Icon.Code}
           />
         </ActionPanel>
@@ -98,7 +98,6 @@ export function Main(): ReactElement {
                     title="Open in Google Search"
                     url={`https://google.com/?s=${encodeURIComponent(item.original)}`}
                   />
-
                 </ActionPanel.Section>
               </ActionPanel>
             }

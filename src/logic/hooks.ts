@@ -1,35 +1,30 @@
+import { useEffect, useState } from 'react'
 import { getPreferenceValues, getSelectedText } from '@raycast/api'
-import React from 'react'
-import type { TranslatePreferences } from '../types'
 import type { LanguageCode } from '../data/languages'
 
-export function usePreferences() {
-  return React.useMemo(() => getPreferenceValues<TranslatePreferences>(), [])
-}
+// preferences won't change at runtime.
+export const preferences = getPreferenceValues<Preferences.Translate>()
 
-export function useTargetLanguages() {
-  return React.useMemo(() => {
-    const pref = getPreferenceValues<TranslatePreferences>()
-    const langs = Object.entries(pref)
-      .filter(([key]) => key.startsWith('lang'))
-      .sort(([key1], [key2]) => key1.localeCompare(key2))
-      .map(([_, value]) => value)
-      .filter(i => i && i !== 'none' && i !== 'auto')
-    return Array.from(new Set(langs)) as LanguageCode[]
-  }, [])
-}
+export const targetLanguages = (() => {
+  const pref = getPreferenceValues<Preferences.Translate>()
+  const langs = Object.entries(pref)
+    .filter(([key]) => key.startsWith('lang'))
+    .sort(([key1], [key2]) => key1.localeCompare(key2))
+    .map(([_, value]) => value)
+    .filter(i => i && i !== 'none')
+  return Array.from(new Set(langs)) as LanguageCode[]
+})()
 
 export function useSystemSelection() {
-  const [text, setText] = React.useState('')
-  const preferences = usePreferences()
-  React.useEffect(() => {
+  const [text, setText] = useState('')
+  useEffect(() => {
     if (!preferences.getSystemSelection)
       return
 
     let isCancelled = false
     getSelectedText()
       .then((cbText) => {
-        if (isCancelled)
+        if (!isCancelled)
           setText((cbText ?? '').trim())
       })
       .catch(() => {})
@@ -43,9 +38,9 @@ export function useSystemSelection() {
 }
 
 export function useDebouncedValue<T>(value: T, delay: number) {
-  const [debouncedValue, setDebouncedValue] = React.useState<T>(value)
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedValue(value)
     }, delay)

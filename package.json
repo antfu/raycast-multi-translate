@@ -30,9 +30,9 @@
     {
       "name": "getSystemSelection",
       "type": "checkbox",
-      "label": "Get text selection",
       "default": true,
-      "required": false,
+      "required": true,
+      "label": "Read system text selection",
       "description": "Automatically get current text selection and translate"
     },
     {
@@ -920,6 +920,7 @@
           "value": "zu"
         }
       ],
+      "required": false,
       "default": "none"
     },
     {
@@ -1365,6 +1366,7 @@
           "value": "zu"
         }
       ],
+      "required": false,
       "default": "none"
     },
     {
@@ -1810,6 +1812,7 @@
           "value": "zu"
         }
       ],
+      "required": false,
       "default": "none"
     },
     {
@@ -2255,6 +2258,7 @@
           "value": "zu"
         }
       ],
+      "required": false,
       "default": "none"
     },
     {
@@ -2700,6 +2704,7 @@
           "value": "zu"
         }
       ],
+      "required": false,
       "default": "none"
     },
     {
@@ -3145,6 +3150,7 @@
           "value": "zu"
         }
       ],
+      "required": false,
       "default": "none"
     }
   ],
