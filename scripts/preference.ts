@@ -34,6 +34,7 @@ import fs from 'node:fs/promises'
             default: 'en',
           }
         : {
+            required: false,
             default: 'none',
           }),
     }
@@ -44,6 +45,7 @@ import fs from 'node:fs/promises'
       name: 'getSystemSelection',
       type: 'checkbox',
       default: true,
+      required: true,
       label: 'Read system text selection',
       description: 'Automatically get current text selection and translate',
     },

@@ -1,26 +1,22 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getPreferenceValues, getSelectedText } from '@raycast/api'
 import type { LanguageCode } from '../data/languages'
 
-export function usePreferences() {
-  return useMemo(() => getPreferenceValues<Preferences.Translate>(), [])
-}
+// preferences won't change at runtime.
+export const preferences = getPreferenceValues<Preferences.Translate>()
 
-export function useTargetLanguages() {
-  return useMemo(() => {
-    const pref = getPreferenceValues<Preferences.Translate>()
-    const langs = Object.entries(pref)
-      .filter(([key]) => key.startsWith('lang'))
-      .sort(([key1], [key2]) => key1.localeCompare(key2))
-      .map(([_, value]) => value)
-      .filter(i => i && i !== 'none')
-    return Array.from(new Set(langs)) as LanguageCode[]
-  }, [])
-}
+export const targetLanguages = (() => {
+  const pref = getPreferenceValues<Preferences.Translate>()
+  const langs = Object.entries(pref)
+    .filter(([key]) => key.startsWith('lang'))
+    .sort(([key1], [key2]) => key1.localeCompare(key2))
+    .map(([_, value]) => value)
+    .filter(i => i && i !== 'none')
+  return Array.from(new Set(langs)) as LanguageCode[]
+})()
 
 export function useSystemSelection() {
   const [text, setText] = useState('')
-  const preferences = usePreferences()
   useEffect(() => {
     if (!preferences.getSystemSelection)
       return
@@ -28,7 +24,7 @@ export function useSystemSelection() {
     let isCancelled = false
     getSelectedText()
       .then((cbText) => {
-        if (isCancelled)
+        if (!isCancelled)
           setText((cbText ?? '').trim())
       })
       .catch(() => {})
