@@ -7,6 +7,7 @@ import { languagesByCode } from '../data/languages'
 import { translateAll } from '../logic/translator'
 import { useDebouncedValue, useSystemSelection, useTargetLanguages } from '../logic/hooks'
 import { unicodeTransform } from '../logic/text'
+import { spellcheck } from '../logic/spellcheck'
 import { SpellcheckItem } from './SpellcheckItem'
 import { TranslateDetail } from './TranslateDetail'
 
@@ -17,8 +18,7 @@ export function Main(): ReactElement {
   const [isShowingDetail, setIsShowingDetail] = useState(true)
   const [input, setInput] = useState('')
   const [systemSelection] = useSystemSelection()
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
-  // const [hasSpellcheck, setHasSpellcheck] = useState(false)
+  const [selectedId, setSelectedId] = useState<string>()
 
   let langFrom: LanguageCode = 'auto'
   const sourceText = (input.trim() || systemSelection)
@@ -39,6 +39,7 @@ export function Main(): ReactElement {
       })
     },
   })
+  const { data: correctedText } = usePromise(spellcheck, [debouncedText])
 
   // reset selection when results change
   useEffect(() => {
@@ -70,11 +71,7 @@ export function Main(): ReactElement {
         </ActionPanel>
       }
     >
-      <SpellcheckItem
-        text={sourceText}
-        // TODO: how to React?
-        // onMismatch={() => setHasSpellcheck(true)}
-      />
+      {correctedText ? <SpellcheckItem text={sourceText} corrected={correctedText} /> : null}
       {results?.map((item, index) => {
         return (
           <List.Item
@@ -90,10 +87,7 @@ export function Main(): ReactElement {
             actions={
               <ActionPanel>
                 <ActionPanel.Section>
-                  <Action.CopyToClipboard
-                    title="Copy"
-                    content={item.translated}
-                  />
+                  <Action.CopyToClipboard title="Copy" content={item.translated} />
                   <Action title="Toggle Full Text" icon={Icon.Text} onAction={() => setIsShowingDetail(!isShowingDetail)} />
                   <Action.OpenInBrowser
                     title="Open in Google Translate"
