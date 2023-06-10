@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
 import type { LanguageCode } from '../data/languages'
-import { languagesByCode } from '../data/languages'
+import { getLanguageName, languages, languagesByCode } from '../data/languages'
 import { translateAll } from '../logic/translator'
 import { targetLanguages, useDebouncedValue, useSystemSelection } from '../logic/hooks'
 import { unicodeTransform } from '../logic/text'
@@ -20,13 +20,21 @@ export function Main(): ReactElement {
   const [systemSelection] = useSystemSelection()
   const [selectedId, setSelectedId] = useState<string>()
 
-  let langFrom: LanguageCode = 'auto'
-  const sourceText = (input.trim() || systemSelection)
+  const [userLangFrom, setUserLangFrom] = useState<LanguageCode>()
+  const [langFrom, setLangFrom] = useState<LanguageCode>('auto')
+
+  const rawSourceText = (input.trim() || systemSelection)
+  const sourceText = rawSourceText
     .replace(langReg, (_, lang) => {
-      langFrom = lang.toLowerCase()
+      const _lang = lang.toLowerCase()
+      if (_lang !== langFrom)
+        setLangFrom(_lang)
       return ''
     })
     .trim()
+
+  if (rawSourceText === sourceText && langFrom !== 'auto')
+    setLangFrom('auto')
 
   const debouncedText = useDebouncedValue(sourceText, 500)
 
@@ -46,12 +54,49 @@ export function Main(): ReactElement {
     setSelectedId(undefined)
   }, [results])
 
-  const fromLangs = new Set(results?.map(i => i.from))
-  const singleSource = fromLangs.size === 1
+  const fromLangs = Array.from(new Set(results?.map(i => i.from)))
+  const singleSource = fromLangs.length === 1
 
   return (
     <List
       searchBarPlaceholder={systemSelection || 'Enter text to translate'}
+      searchBarAccessory={
+        <List.Dropdown
+          tooltip='Source language'
+          value={userLangFrom ?? langFrom}
+          onChange={(v) => {
+            if (v === 'auto')
+              setUserLangFrom(undefined)
+            else
+              setUserLangFrom(v as LanguageCode)
+          }}
+        >
+          <List.Dropdown.Item
+            key='auto'
+            title={singleSource ? `Auto (${getLanguageName(fromLangs[0])})` : 'Auto'}
+            value='auto'
+            />
+          <List.Dropdown.Section>
+            {targetLanguages.map(lang => (
+              <List.Dropdown.Item
+                key={lang}
+                title={getLanguageName(lang)}
+                value={lang}
+              />
+            ))}
+          </List.Dropdown.Section>
+          <List.Dropdown.Section>
+            {Object.values(languages)
+              .filter(lang => lang.code !== 'auto' && !targetLanguages.includes(lang.code))
+              .map(lang => (
+                <List.Dropdown.Item
+                  key={lang.code}
+                  title={lang.name}
+                  value={lang.code}
+              />))}
+          </List.Dropdown.Section>
+        </List.Dropdown>
+      }
       searchText={input}
       onSearchTextChange={setInput}
       isLoading={isLoading}
