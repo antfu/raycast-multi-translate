@@ -2,7 +2,7 @@ import type { ReactElement } from 'react'
 import { Icon, List } from '@raycast/api'
 import { usePromise } from '@raycast/utils'
 import { getLanguageName } from '../data/languages'
-import type { TranslateResult } from '../logic/translator'
+import type { TranslateResult } from '../types'
 import { translate } from '../logic/translator'
 
 export function TranslateDetail({ item }: { item: TranslateResult }): ReactElement {

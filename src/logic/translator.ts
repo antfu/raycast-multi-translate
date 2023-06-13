@@ -1,15 +1,9 @@
 import googleTranslate from '@iamtraction/google-translate'
 import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
+import type { TranslateResult } from '../types'
 
 export const AUTO_DETECT = 'auto'
-
-export interface TranslateResult {
-  original: string
-  translated: string
-  from: LanguageCode
-  to: LanguageCode
-}
 
 const cache = new LRUCache<string, TranslateResult>({
   max: 1000,

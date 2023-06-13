@@ -8,6 +8,7 @@ import { translateAll } from '../logic/translator'
 import { targetLanguages, useDebouncedValue, useSystemSelection } from '../logic/hooks'
 import { unicodeTransform } from '../logic/text'
 import { spellcheck } from '../logic/spellcheck'
+import { webDictionaries } from '../data/web-dictionaries'
 import { SpellcheckItem } from './SpellcheckItem'
 import { TranslateDetail } from './TranslateDetail'
 
@@ -124,6 +125,20 @@ export function Main(): ReactElement {
     >
       {correctedText ? <SpellcheckItem text={sourceText} corrected={correctedText} /> : null}
       {results?.map((item, index) => {
+        const webDicts = webDictionaries
+          .filter(dic => (dic.sentence || !item.translated.includes(' '))
+            && (!dic.enables || dic.enables.some(i => targetLanguages.includes(i)))
+            && ([item.from, item.to].includes(dic.lang)),
+          )
+          .map((dic) => {
+            const text = item.from === dic.lang ? item.original : item.translated
+            return {
+              title: dic.name,
+              url: dic.url(text, item),
+            }
+          })
+          .filter(dic => dic.url)
+
         return (
           <List.Item
             key={index}
@@ -139,7 +154,17 @@ export function Main(): ReactElement {
               <ActionPanel>
                 <ActionPanel.Section>
                   <Action.CopyToClipboard title="Copy" content={item.translated} />
-                  <Action title="Toggle Full Text" icon={Icon.Text} onAction={() => setIsShowingDetail(!isShowingDetail)} />
+                  {
+                    webDicts.map((dic, idx) => (
+                      <Action.OpenInBrowser
+                        shortcut={idx ? undefined : { modifiers: ['cmd'], key: 'enter' }}
+                        key={dic.title}
+                        title={`Open in ${dic.title}`}
+                        url={dic.url!}
+                        icon={Icon.Book}
+                      />
+                    ))
+                  }
                   <Action.OpenInBrowser
                     title="Open in Google Translate"
                     shortcut={{ modifiers: ['opt'], key: 'enter' }}
@@ -147,8 +172,9 @@ export function Main(): ReactElement {
                   />
                   <Action.OpenInBrowser
                     title="Open in Google Search"
-                    url={`https://google.com/?s=${encodeURIComponent(item.original)}`}
+                    url={`https://google.com/?q=${encodeURIComponent(item.original)}`}
                   />
+                  <Action title="Toggle Full Text" icon={Icon.Text} onAction={() => setIsShowingDetail(!isShowingDetail)} />
                 </ActionPanel.Section>
               </ActionPanel>
             }
