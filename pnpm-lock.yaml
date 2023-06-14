@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -26,6 +26,9 @@ dependencies:
   satori:
     specifier: ^0.10.1
     version: 0.10.1
+  undici:
+    specifier: ^5.22.1
+    version: 5.22.1
 
 devDependencies:
   '@antfu/eslint-config':
