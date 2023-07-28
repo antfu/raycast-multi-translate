@@ -49,6 +49,31 @@ import fs from 'node:fs/promises'
       label: 'Read system text selection',
       description: 'Automatically get current text selection and translate',
     },
+    {
+      name: 'engine',
+      type: 'dropdown',
+      title: 'Translation engine',
+      description: 'Translation engine',
+      data: [
+        {
+          title: 'Google',
+          value: 'google',
+        },
+        {
+          title: 'DeepL',
+          value: 'deepl',
+        },
+      ],
+      required: true,
+      default: 'google',
+    },
+    {
+      name: 'apiKey',
+      type: 'textfield',
+      title: 'Translation engine API key',
+      description: 'Translation engine API key',
+      required: false,
+    },
     ...langs,
   ]
 
