@@ -63,10 +63,10 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
         break
       }
       case 'deepl': {
-        if (!preferences.apiKey)
+        if (!preferences.deeplApiKey)
           throw new TranslateError('please set your API key', 'DeepL')
 
-        const translator = new DeepLTranslator(preferences.apiKey)
+        const translator = new DeepLTranslator(preferences.deeplApiKey)
 
         // DeepL accepts ISO 639-1 language codes and null (auto-detection) for the source language
         const fromCode = from === 'auto' ? null : nonRegionalLanguageCode(from)

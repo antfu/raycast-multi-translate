@@ -54,10 +54,10 @@
       "default": "google"
     },
     {
-      "name": "apiKey",
+      "name": "deeplApiKey",
       "type": "textfield",
-      "title": "Translation engine API key",
-      "description": "Translation engine API key",
+      "title": "DeepL API key",
+      "description": "DeepL API key",
       "required": false
     },
     {
