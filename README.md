@@ -40,6 +40,10 @@ Support translating up to 7 languages at once. Options can be found in the exten
 
 <img width="1112" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/797a83ea-6013-4cef-82fe-dfc5d309aada">
 
+### Translation Providers
+
+Google Translate is used by default. You can switch the translation provider to DeepL in Raycast settings and add your DeepL API key, choosing either the Free or Pro API endpoint.
+
 ### Spellcheck
 
 When you misspell some words, an additional item will be listed, with diffing support to help you find the correct spelling easier.
