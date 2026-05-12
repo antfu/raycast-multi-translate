@@ -37,6 +37,49 @@
       "description": "Automatically get current text selection and translate"
     },
     {
+      "name": "translationEngine",
+      "type": "dropdown",
+      "title": "Translation Engine",
+      "description": "Translation engine to use",
+      "required": true,
+      "default": "google",
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL",
+          "value": "deepl"
+        }
+      ]
+    },
+    {
+      "name": "deeplApiEndpoint",
+      "type": "dropdown",
+      "title": "DeepL API Endpoint",
+      "description": "DeepL API endpoint for your account type",
+      "required": true,
+      "default": "free",
+      "data": [
+        {
+          "title": "DeepL API Free",
+          "value": "free"
+        },
+        {
+          "title": "DeepL API Pro",
+          "value": "pro"
+        }
+      ]
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "Required only when using DeepL",
+      "required": false
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",

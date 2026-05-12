@@ -52,6 +52,10 @@ By default we send the text to Google Translate and let it detect the source lan
 
 <img width="862" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/5dc72896-f1ce-440c-8337-8fe8350cb59e">
 
+## DeepL
+
+You can switch the translation engine to DeepL from the extension preferences. Choose the Free or Pro API endpoint for your DeepL account type and add your API key.
+
 ## Credits
 
 Originally forked from https://github.com/raycast/extensions/tree/main/extensions/google-translate, thanks to [@gebeto](https://github.com/gebeto) et al.
