@@ -1,26 +1,24 @@
-import googleTranslate from '@iamtraction/google-translate'
+import { getPreferenceValues } from '@raycast/api'
 import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
+import { translateWithDeepL } from './providers/deepl'
+import { TranslateError } from './providers/errors'
+import { translateWithGoogle } from './providers/google'
 
 export const AUTO_DETECT = 'auto'
+
+export { TranslateError }
+
+interface TranslationPreferences {
+  translationProvider?: 'google' | 'deepl'
+  deeplApiKey?: string
+  deeplApiPlan?: 'free' | 'pro'
+}
 
 const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
 })
-
-export class TranslateError extends Error {
-  constructor(message?: string | Error, name?: string) {
-    if (message instanceof Error) {
-      super(message.message)
-      this.name = name || message.name
-    }
-    else {
-      super(message)
-      this.name = name || this.name
-    }
-  }
-}
 
 export async function translate(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
   if (!text) {
@@ -32,43 +30,26 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
     }
   }
 
-  const key = `${from}:${to}:${text}`
+  const prefs = getPreferenceValues<TranslationPreferences>()
+  const provider = prefs.translationProvider ?? 'google'
+
+  const key = `${provider}:${from}:${to}:${text}`
   const cached = cache.get(key)
   if (cached)
     return cached
 
-  try {
-    const translated = await googleTranslate(text, {
-      from,
-      to,
+  const result = provider === 'deepl'
+    ? await translateWithDeepL(text, from, to, {
+      apiKey: prefs.deeplApiKey ?? '',
+      plan: prefs.deeplApiPlan ?? 'free',
     })
+    : await translateWithGoogle(text, from, to)
 
-    const result = {
-      original: text,
-      translated: translated.text,
-      from: translated?.from?.language?.didYouMean
-        ? from
-        : translated?.from?.language?.iso as LanguageCode,
-      to,
-    }
-    cache.set(key, result)
-    return result
-  }
-  catch (err) {
-    if (err instanceof Error) {
-      switch (err.name) {
-        case 'TooManyRequestsError':
-          throw new TranslateError('please try again later', 'Too many requests')
-        default:
-          throw new TranslateError(err)
-      }
-    }
-
-    throw err
-  }
+  cache.set(key, result)
+  return result
 }
 
-export async function translateAll(text: string, from: LanguageCode = 'auto', languages: LanguageCode[]) {
+export async function translateAll(text: string, from: LanguageCode = 'auto', languages: LanguageCode[]): Promise<TranslateResult[]> {
   if (!text)
     return []
 

@@ -3153,6 +3153,50 @@
       ],
       "required": false,
       "default": "none"
+    },
+    {
+      "name": "translationProvider",
+      "type": "dropdown",
+      "title": "Translation Provider",
+      "description": "Service used to translate text. DeepL requires an API key (Free plan available).",
+      "required": false,
+      "default": "google",
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL",
+          "value": "deepl"
+        }
+      ]
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "DeepL authentication key. Get one from https://www.deepl.com/pro-api (Free plan is sufficient).",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "deeplApiPlan",
+      "type": "dropdown",
+      "title": "DeepL Plan",
+      "description": "Selects the DeepL API endpoint. Pro plan uses api.deepl.com; Free uses api-free.deepl.com.",
+      "required": false,
+      "default": "free",
+      "data": [
+        {
+          "title": "Free",
+          "value": "free"
+        },
+        {
+          "title": "Pro",
+          "value": "pro"
+        }
+      ]
     }
   ],
   "scripts": {
