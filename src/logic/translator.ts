@@ -1,9 +1,14 @@
 import googleTranslate from '@iamtraction/google-translate'
 import { LRUCache } from 'lru-cache'
+import { getPreferenceValues } from '@raycast/api'
+import { translateWithDeepL } from './deepl'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
 
 export const AUTO_DETECT = 'auto'
+
+// Preferences don't change at runtime, so read them once.
+const preferences = getPreferenceValues<Preferences.Translate>()
 
 const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
@@ -32,25 +37,40 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
     }
   }
 
-  const key = `${from}:${to}:${text}`
+  const useDeepL = preferences.provider === 'deepl' && !!preferences.deeplApiKey
+
+  const key = `${useDeepL ? 'deepl' : 'google'}:${from}:${to}:${text}`
   const cached = cache.get(key)
   if (cached)
     return cached
 
   try {
-    const translated = await googleTranslate(text, {
-      from,
-      to,
-    })
+    let result: TranslateResult
 
-    const result = {
-      original: text,
-      translated: translated.text,
-      from: translated?.from?.language?.didYouMean
-        ? from
-        : translated?.from?.language?.iso as LanguageCode,
-      to,
+    if (useDeepL) {
+      const { translated, detectedSource } = await translateWithDeepL(text, from, to, preferences.deeplApiKey!)
+      result = {
+        original: text,
+        translated,
+        from: from === 'auto' ? (detectedSource ?? from) : from,
+        to,
+      }
     }
+    else {
+      const translated = await googleTranslate(text, {
+        from,
+        to,
+      })
+      result = {
+        original: text,
+        translated: translated.text,
+        from: translated?.from?.language?.didYouMean
+          ? from
+          : translated?.from?.language?.iso as LanguageCode,
+        to,
+      }
+    }
+
     cache.set(key, result)
     return result
   }
