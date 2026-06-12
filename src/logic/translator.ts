@@ -50,8 +50,45 @@ const DEEPL_LANGUAGE_CODES: Partial<Record<LanguageCode, string>> = {
   pt: 'PT',
 }
 
+const DEEPL_TARGET_LANGUAGE_CODES: Partial<Record<LanguageCode, string>> = {
+  ...DEEPL_LANGUAGE_CODES,
+  pt: 'PT-PT',
+}
+
 const DEEPL_DETECTED_LANGUAGE_CODES: Record<string, LanguageCode> = {
+  AR: 'ar',
+  BG: 'bg',
+  CS: 'cs',
+  DA: 'da',
+  DE: 'de',
+  EL: 'el',
+  EN: 'en',
+  'EN-GB': 'en',
+  'EN-US': 'en',
+  ES: 'es',
+  ET: 'et',
+  FI: 'fi',
+  FR: 'fr',
+  HU: 'hu',
+  ID: 'id',
+  IT: 'it',
+  JA: 'ja',
+  KO: 'ko',
+  LT: 'lt',
+  LV: 'lv',
   NB: 'no',
+  NL: 'nl',
+  PL: 'pl',
+  PT: 'pt',
+  'PT-BR': 'pt',
+  'PT-PT': 'pt',
+  RO: 'ro',
+  RU: 'ru',
+  SK: 'sk',
+  SL: 'sl',
+  SV: 'sv',
+  TR: 'tr',
+  UK: 'uk',
   ZH: 'zh-CN',
   'ZH-HANS': 'zh-CN',
   'ZH-HANT': 'zh-TW',
@@ -92,10 +129,16 @@ function getDeepLLanguageCode(code: LanguageCode) {
   return normalizedCode
 }
 
+function getDeepLTargetLanguageCode(code: LanguageCode) {
+  getDeepLLanguageCode(code)
+  return DEEPL_TARGET_LANGUAGE_CODES[code] || code.toUpperCase()
+}
+
 function getLanguageCodeFromDeepL(code?: string) {
-  if (!code)
-    return AUTO_DETECT
-  return DEEPL_DETECTED_LANGUAGE_CODES[code] || code.toLowerCase() as LanguageCode
+  const normalizedCode = code?.toUpperCase()
+  if (!normalizedCode || !DEEPL_DETECTED_LANGUAGE_CODES[normalizedCode])
+    throw new TranslateError('DeepL did not return a supported source language')
+  return DEEPL_DETECTED_LANGUAGE_CODES[normalizedCode]
 }
 
 function getDeepLEndpoint(apiKey: string) {
@@ -107,7 +150,7 @@ function getDeepLEndpoint(apiKey: string) {
 async function translateWithDeepL(text: string, from: LanguageCode, to: LanguageCode, apiKey: string): Promise<TranslateResult> {
   const body = new URLSearchParams()
   body.set('text', text)
-  body.set('target_lang', getDeepLLanguageCode(to))
+  body.set('target_lang', getDeepLTargetLanguageCode(to))
   if (from !== AUTO_DETECT)
     body.set('source_lang', getDeepLLanguageCode(from))
 
