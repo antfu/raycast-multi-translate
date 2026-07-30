@@ -37,6 +37,31 @@
       "description": "Automatically get current text selection and translate"
     },
     {
+      "name": "translationEngine",
+      "type": "dropdown",
+      "title": "Translation Engine",
+      "description": "Translation engine used for all translations",
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL",
+          "value": "deepl"
+        }
+      ],
+      "required": true,
+      "default": "google"
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "Required when Translation Engine is DeepL",
+      "required": false
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",
@@ -3168,6 +3193,7 @@
     "@iamtraction/google-translate": "^2.0.1",
     "@raycast/api": "^1.101.1",
     "@raycast/utils": "^2.2.0",
+    "deepl-node": "^1.27.0",
     "diff": "^8.0.2",
     "execa": "^9.6.0",
     "lru-cache": "^11.1.0",
