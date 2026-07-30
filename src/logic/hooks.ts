@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
-import { getPreferenceValues, getSelectedText } from '@raycast/api'
+import { getSelectedText } from '@raycast/api'
 import type { LanguageCode } from '../data/languages'
+import { preferences } from './preferences'
 
-// preferences won't change at runtime.
-export const preferences = getPreferenceValues<Preferences.Translate>()
+export { preferences }
 
 export const targetLanguages = (() => {
-  const pref = getPreferenceValues<Preferences.Translate>()
-  const langs = Object.entries(pref)
+  const langs = Object.entries(preferences)
     .filter(([key]) => key.startsWith('lang'))
     .sort(([key1], [key2]) => key1.localeCompare(key2))
     .map(([_, value]) => value)
