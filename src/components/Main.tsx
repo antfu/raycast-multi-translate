@@ -22,20 +22,11 @@ export function Main(): ReactElement {
   const [selectedId, setSelectedId] = useState<string>()
 
   const [userLangFrom, setUserLangFrom] = useState<LanguageCode>()
-  const [inlineLangFrom, setInlineLangFrom] = useState<LanguageCode>('auto')
 
   const rawSourceText = (input.trim() || systemSelection)
-  const sourceText = rawSourceText
-    .replace(langReg, (_, lang) => {
-      const _lang = lang.toLowerCase()
-      if (_lang !== inlineLangFrom)
-        setInlineLangFrom(_lang)
-      return ''
-    })
-    .trim()
-
-  if (rawSourceText === sourceText && inlineLangFrom !== 'auto')
-    setInlineLangFrom('auto')
+  const match = rawSourceText.match(langReg)
+  const inlineLangFrom = match ? (match[1].toLowerCase() as LanguageCode) : 'auto'
+  const sourceText = (match ? rawSourceText.slice(0, match.index) : rawSourceText).trim()
 
   const langFrom = userLangFrom ?? inlineLangFrom
 
@@ -45,6 +36,7 @@ export function Main(): ReactElement {
     translateAll,
     [debouncedText, langFrom, langs],
     {
+      execute: !!debouncedText,
       onError(error) {
         showToast({
           style: Toast.Style.Failure,
@@ -54,7 +46,9 @@ export function Main(): ReactElement {
       },
     })
 
-  const { data: correctedText } = usePromise(spellcheck, [debouncedText])
+  const { data: correctedText } = usePromise(spellcheck, [debouncedText], {
+    execute: !!debouncedText,
+  })
 
   // reset selection when results change
   useEffect(() => {
@@ -123,7 +117,7 @@ export function Main(): ReactElement {
         </ActionPanel>
       }
     >
-      {correctedText ? <SpellcheckItem text={sourceText} corrected={correctedText} /> : null}
+      {correctedText && correctedText.trim().toLowerCase() !== sourceText.trim().toLowerCase() ? <SpellcheckItem text={sourceText} corrected={correctedText} /> : null}
       {results?.map((item, index) => {
         const webDicts = webDictionaries
           .filter(dic => (dic.sentence || !item.translated.includes(' '))
