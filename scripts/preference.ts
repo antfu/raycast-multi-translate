@@ -49,6 +49,31 @@ import fs from 'node:fs/promises'
       label: 'Read system text selection',
       description: 'Automatically get current text selection and translate',
     },
+    {
+      name: 'translationProvider',
+      type: 'dropdown',
+      title: 'Translation Provider',
+      description: 'Select the translation service to use',
+      data: [
+        {
+          title: 'Google Translate',
+          value: 'google',
+        },
+        {
+          title: 'DeepL (BYOK)',
+          value: 'deepl',
+        },
+      ],
+      required: true,
+      default: 'google',
+    },
+    {
+      name: 'deepLApiKey',
+      type: 'password',
+      title: 'DeepL API Key',
+      description: 'Your DeepL API key (https://www.deepl.com/docs-api). Free keys end with `:fx`.',
+      required: false,
+    },
     ...langs,
   ]
 
