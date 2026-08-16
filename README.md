@@ -52,6 +52,16 @@ By default we send the text to Google Translate and let it detect the source lan
 
 <img width="862" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/5dc72896-f1ce-440c-8337-8fe8350cb59e">
 
+### DeepL (BYOK)
+
+DeepL is supported as an alternative translator. Bring your own key:
+
+1. Get a [DeepL API key](https://www.deepl.com/docs-api) (free or pro)
+2. Set it in the extension preferences (**DeepL API Key**)
+3. Translations for [languages supported by DeepL](https://developers.deepl.com/docs/api-reference/languages) now route through DeepL; any other language automatically falls back to Google Translate
+
+DeepL is often higher quality for many language pairs, and lets you avoid Google entirely when a key is configured.
+
 ## Credits
 
 Originally forked from https://github.com/raycast/extensions/tree/main/extensions/google-translate, thanks to [@gebeto](https://github.com/gebeto) et al.

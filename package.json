@@ -37,6 +37,13 @@
       "description": "Automatically get current text selection and translate"
     },
     {
+      "name": "deeplApiKey",
+      "type": "password",
+      "required": false,
+      "title": "DeepL API Key",
+      "description": "Optional DeepL API key (BYOK). When set, translations for supported languages use DeepL; all others fall back to Google Translate."
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",
