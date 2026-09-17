@@ -40,6 +40,12 @@ Support translating up to 7 languages at once. Options can be found in the exten
 
 <img width="1112" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/797a83ea-6013-4cef-82fe-dfc5d309aada">
 
+### DeepL
+
+Google Translate is the default. To use DeepL, select **DeepL** under **Translation Provider** in the extension preferences and enter your own **DeepL API Key**. Both API Free and API Pro keys are supported; the endpoint is selected automatically. Get a key from your [DeepL API account](https://www.deepl.com/pro-api).
+
+DeepL is used for both translations and back translations, with automatic source detection and the same source-language overrides. Choose languages supported by [DeepL](https://developers.deepl.com/docs/getting-started/supported-languages); unsupported language pairs produce an error without falling back to Google. Translation and back translation both count toward your DeepL quota.
+
 ### Spellcheck
 
 When you misspell some words, an additional item will be listed, with diffing support to help you find the correct spelling easier.
@@ -48,7 +54,7 @@ When you misspell some words, an additional item will be listed, with diffing su
 
 ### Source Language Detection
 
-By default we send the text to Google Translate and let it detect the source language automatically. In some cases, it might not be accurate because different works in different languages can spell the same. For example, `ours` in French means `bear`, but in English, it means `belonging to us`. In this case, if you want to translate `ours` in French, you can add `>fr` to the end of the text to force the source language to be French.
+By default we send the text to the selected translation provider and let it detect the source language automatically. In some cases, it might not be accurate because different works in different languages can spell the same. For example, `ours` in French means `bear`, but in English, it means `belonging to us`. In this case, if you want to translate `ours` in French, you can add `>fr` to the end of the text to force the source language to be French.
 
 <img width="862" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/5dc72896-f1ce-440c-8337-8fe8350cb59e">
 

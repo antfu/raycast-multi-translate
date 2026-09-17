@@ -42,6 +42,25 @@ import fs from 'node:fs/promises'
 
   pkg.preferences = [
     {
+      name: 'translationProvider',
+      type: 'dropdown',
+      title: 'Translation Provider',
+      description: 'Service used for translations and back translations',
+      required: true,
+      default: 'google',
+      data: [
+        { title: 'Google Translate', value: 'google' },
+        { title: 'DeepL', value: 'deepl' },
+      ],
+    },
+    {
+      name: 'deeplApiKey',
+      type: 'password',
+      title: 'DeepL API Key',
+      description: 'Required for DeepL. Supports API Free and API Pro keys.',
+      required: false,
+    },
+    {
       name: 'getSystemSelection',
       type: 'checkbox',
       default: true,
