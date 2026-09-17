@@ -58,6 +58,18 @@ test('DeepL handles API errors without exposing the response body', async (t) =>
 })
 
 test('DeepL rejects malformed responses', async (t) => {
-  t.mock.method(globalThis, 'fetch', async () => ({ ok: true, json: async () => ({ translations: [] }) }))
-  await assert.rejects(translateDeepL('Hello', 'auto', 'fr', 'test'), /invalid translation response/)
+  let response: unknown
+  t.mock.method(globalThis, 'fetch', async () => ({ ok: true, json: async () => response }))
+  for (const body of [
+    null,
+    {},
+    { translations: [] },
+    { translations: [null] },
+    { translations: [{ text: 'Bonjour' }] },
+    { translations: [{ text: 123, detected_source_language: 'EN' }] },
+    { translations: { 0: { text: 'Bonjour', detected_source_language: 'EN' } } },
+  ]) {
+    response = body
+    await assert.rejects(translateDeepL('Hello', 'auto', 'fr', 'test'), /invalid translation response/)
+  }
 })

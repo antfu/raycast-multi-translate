@@ -56,7 +56,7 @@ export async function translateDeepL(text: string, from: LanguageCode, to: Langu
   const data = await response.json() as {
     translations?: { text: string, detected_source_language: string }[]
   }
-  const translation = data.translations?.[0]
+  const translation = Array.isArray(data?.translations) ? data.translations[0] : undefined
   if (!translation || typeof translation.text !== 'string' || typeof translation.detected_source_language !== 'string')
     throw new Error('DeepL returned an invalid translation response')
 
