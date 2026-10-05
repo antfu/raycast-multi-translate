@@ -1,7 +1,9 @@
 import googleTranslate from '@iamtraction/google-translate'
+import { getPreferenceValues } from '@raycast/api'
 import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
+import { translateWithDeepL } from './deepl'
 
 export const AUTO_DETECT = 'auto'
 
@@ -36,6 +38,13 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
   const cached = cache.get(key)
   if (cached)
     return cached
+
+  const { engine, deeplApiKey } = getPreferenceValues<Preferences.Translate>()
+  if (engine === 'deepl') {
+    const result = await translateWithDeepL(text, from, to, deeplApiKey)
+    cache.set(key, result)
+    return result
+  }
 
   try {
     const translated = await googleTranslate(text, {

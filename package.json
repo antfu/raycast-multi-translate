@@ -3153,6 +3153,31 @@
       ],
       "required": false,
       "default": "none"
+    },
+    {
+      "name": "engine",
+      "type": "dropdown",
+      "title": "Translation Engine",
+      "description": "Service used to translate text",
+      "required": false,
+      "default": "google",
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL (requires API key)",
+          "value": "deepl"
+        }
+      ]
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "Your own DeepL API key, required when DeepL is the translation engine. Free keys (ending with \":fx\") use the free API endpoint.",
+      "required": false
     }
   ],
   "scripts": {
