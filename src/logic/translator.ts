@@ -1,7 +1,12 @@
 import googleTranslate from '@iamtraction/google-translate'
+import { getPreferenceValues } from '@raycast/api'
 import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
+import { deeplTargetLanguage, deeplTranslate } from './deepl'
+import { TranslateError } from './errors'
+
+export { TranslateError }
 
 export const AUTO_DETECT = 'auto'
 
@@ -9,41 +14,14 @@ const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
 })
 
-export class TranslateError extends Error {
-  constructor(message?: string | Error, name?: string) {
-    if (message instanceof Error) {
-      super(message.message)
-      this.name = name || message.name
-    }
-    else {
-      super(message)
-      this.name = name || this.name
-    }
-  }
-}
-
-export async function translate(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
-  if (!text) {
-    return {
-      original: text,
-      translated: '',
-      from,
-      to,
-    }
-  }
-
-  const key = `${from}:${to}:${text}`
-  const cached = cache.get(key)
-  if (cached)
-    return cached
-
+async function google(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
   try {
     const translated = await googleTranslate(text, {
       from,
       to,
     })
 
-    const result = {
+    return {
       original: text,
       translated: translated.text,
       from: translated?.from?.language?.didYouMean
@@ -51,8 +29,6 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
         : translated?.from?.language?.iso as LanguageCode,
       to,
     }
-    cache.set(key, result)
-    return result
   }
   catch (err) {
     if (err instanceof Error) {
@@ -68,13 +44,62 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
   }
 }
 
+export async function translate(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
+  if (!text) {
+    return {
+      original: text,
+      translated: '',
+      from,
+      to,
+    }
+  }
+
+  const preferences = getPreferenceValues<Preferences.Translate>()
+  const wantsDeepl = preferences.translationProvider === 'deepl'
+  if (wantsDeepl && !preferences.deeplApiKey)
+    throw new TranslateError('set your DeepL API key in extension preferences', 'DeepL API key missing')
+
+  const deeplTarget = wantsDeepl ? deeplTargetLanguage(to) : undefined
+  if (wantsDeepl && !deeplTarget)
+    throw new TranslateError(`DeepL does not support target language "${to}"`, 'UnsupportedLanguage')
+
+  const useDeepl = Boolean(deeplTarget)
+  const key = `${useDeepl ? 'deepl' : 'google'}:${from}:${to}:${text}`
+  const cached = cache.get(key)
+  if (cached)
+    return cached
+
+  const result = useDeepl
+    ? await deeplTranslate(text, from, to, preferences.deeplApiKey || '', preferences.deeplEndpoint || 'free')
+    : await google(text, from, to)
+
+  cache.set(key, result)
+  return result
+}
+
 export async function translateAll(text: string, from: LanguageCode = 'auto', languages: LanguageCode[]) {
   if (!text)
     return []
 
-  const result = (await Promise.all(languages.map(async to => translate(text, from, to)))).filter(i => i.translated)
+  let firstUnsupported: TranslateError | undefined
+  const translations = await Promise.all(languages.map(async (to) => {
+    try {
+      return await translate(text, from, to)
+    }
+    catch (err) {
+      if (err instanceof TranslateError && err.name === 'UnsupportedLanguage') {
+        firstUnsupported ||= err
+        return null
+      }
+      throw err
+    }
+  }))
 
-  const fromLangs = new Set(result?.map(i => i.from))
+  const result = translations.filter((item): item is TranslateResult => Boolean(item?.translated))
+  if (!result.length && firstUnsupported)
+    throw firstUnsupported
+
+  const fromLangs = new Set(result.map(i => i.from))
   const singleSource = fromLangs.size === 1
   if (singleSource)
     return result.filter(i => i.from !== i.to && i.translated.trim().toLowerCase() !== i.original.trim().toLowerCase())
