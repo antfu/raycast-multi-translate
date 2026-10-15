@@ -171,6 +171,11 @@ export function Main(): ReactElement {
                     url={`https://translate.google.com/?sl=${item.from}&tl=${item.to}&text=${encodeURIComponent(item.original)}&op=translate`}
                   />
                   <Action.OpenInBrowser
+                    title="Open in DeepL"
+                    url={`https://www.deepl.com/translator#${item.from}/${item.to}/${encodeURIComponent(item.original)}`}
+                    icon={Icon.Globe}
+                  />
+                  <Action.OpenInBrowser
                     title="Open in Google Search"
                     url={`https://google.com/?q=${encodeURIComponent(item.original)}`}
                   />
