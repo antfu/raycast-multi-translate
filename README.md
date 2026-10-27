@@ -52,6 +52,14 @@ By default we send the text to Google Translate and let it detect the source lan
 
 <img width="862" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/5dc72896-f1ce-440c-8337-8fe8350cb59e">
 
+### DeepL Provider
+
+By default translations go through Google Translate. To use [DeepL](https://www.deepl.com) instead — often higher quality — select `DeepL` as the **Translation Provider** in the extension preferences and paste your own API key ([get one here](https://www.deepl.com/pro-api); the free plan works).
+
+- Both Free and Pro keys work — the right endpoint (`api-free.deepl.com` vs `api.deepl.com`) is chosen automatically from the key.
+- Source language stays auto-detected; DeepL reports the detected language back.
+- Language pairs DeepL does not serve still get translated via Google, so your language list is never left with holes.
+
 ## Credits
 
 Originally forked from https://github.com/raycast/extensions/tree/main/extensions/google-translate, thanks to [@gebeto](https://github.com/gebeto) et al.

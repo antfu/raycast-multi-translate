@@ -1,25 +1,35 @@
-import googleTranslate from '@iamtraction/google-translate'
+import { getPreferenceValues } from '@raycast/api'
 import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
+import { deeplProvider } from './providers/deepl'
+import { googleProvider } from './providers/google'
+import { TranslateError } from './providers/types'
+import type { TranslateProvider } from './providers/types'
 
 export const AUTO_DETECT = 'auto'
+
+// Re-exported so existing imports keep working.
+export { TranslateError }
 
 const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
 })
 
-export class TranslateError extends Error {
-  constructor(message?: string | Error, name?: string) {
-    if (message instanceof Error) {
-      super(message.message)
-      this.name = name || message.name
-    }
-    else {
-      super(message)
-      this.name = name || this.name
-    }
-  }
+/**
+ * Ordered provider chain from the extension preferences:
+ * the selected provider first, then Google as the universal fallback so
+ * pairs DeepL cannot serve (e.g. Hindi, Swahili) still get translated.
+ */
+function providerChain(): TranslateProvider[] {
+  const { translationProvider, deeplApiKey } = getPreferenceValues<Preferences.Translate>()
+  if (translationProvider !== 'deepl')
+    return [googleProvider]
+
+  const apiKey = deeplApiKey?.trim()
+  if (!apiKey)
+    throw new TranslateError('Add your DeepL API key in the extension preferences', 'Missing API key')
+  return [deeplProvider(apiKey), googleProvider]
 }
 
 export async function translate(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
@@ -32,40 +42,23 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
     }
   }
 
-  const key = `${from}:${to}:${text}`
+  const chain = providerChain()
+  const key = `${chain[0].id}:${from}:${to}:${text}`
   const cached = cache.get(key)
   if (cached)
     return cached
 
-  try {
-    const translated = await googleTranslate(text, {
-      from,
-      to,
-    })
+  for (const provider of chain) {
+    if (provider.supports && !provider.supports(from, to))
+      continue
 
-    const result = {
-      original: text,
-      translated: translated.text,
-      from: translated?.from?.language?.didYouMean
-        ? from
-        : translated?.from?.language?.iso as LanguageCode,
-      to,
-    }
+    const result = await provider.translate(text, from, to)
     cache.set(key, result)
     return result
   }
-  catch (err) {
-    if (err instanceof Error) {
-      switch (err.name) {
-        case 'TooManyRequestsError':
-          throw new TranslateError('please try again later', 'Too many requests')
-        default:
-          throw new TranslateError(err)
-      }
-    }
 
-    throw err
-  }
+  // Unreachable today: Google declares no `supports` and serves every pair.
+  throw new TranslateError('no translation provider can serve this language pair', 'Unsupported language')
 }
 
 export async function translateAll(text: string, from: LanguageCode = 'auto', languages: LanguageCode[]) {
