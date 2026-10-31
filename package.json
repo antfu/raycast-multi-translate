@@ -3153,6 +3153,13 @@
       ],
       "required": false,
       "default": "none"
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "Optional DeepL API Key for higher-quality translations (Free or Pro)",
+      "required": false
     }
   ],
   "scripts": {

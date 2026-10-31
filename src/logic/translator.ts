@@ -22,7 +22,91 @@ export class TranslateError extends Error {
   }
 }
 
-export async function translate(text: string, from: LanguageCode, to: LanguageCode): Promise<TranslateResult> {
+export function formatDeepLLanguage(lang: string, isTarget = true): string | undefined {
+  if (!lang || lang === 'auto')
+    return undefined
+
+  if (isTarget) {
+    const targetMap: Record<string, string> = {
+      en: 'EN-US',
+      pt: 'PT-PT',
+      'zh-CN': 'ZH',
+      'zh-TW': 'ZH',
+    }
+    return targetMap[lang] || lang.toUpperCase()
+  }
+
+  return lang.toUpperCase().split('-')[0]
+}
+
+export async function translateWithDeepL(
+  text: string,
+  from: LanguageCode,
+  to: LanguageCode,
+  apiKey: string,
+  fetchFn = fetch,
+): Promise<TranslateResult> {
+  const isFree = apiKey.endsWith(':fx')
+  const endpoint = isFree
+    ? 'https://api-free.deepl.com/v2/translate'
+    : 'https://api.deepl.com/v2/translate'
+
+  const targetLang = formatDeepLLanguage(to, true)
+  if (!targetLang)
+    throw new Error(`Unsupported DeepL target language: ${to}`)
+
+  const sourceLang = formatDeepLLanguage(from, false)
+
+  const body: Record<string, any> = {
+    text: [text],
+    target_lang: targetLang,
+  }
+  if (sourceLang)
+    body.source_lang = sourceLang
+
+  const res = await fetchFn(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `DeepL-Auth-Key ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '')
+    throw new Error(`DeepL API error (${res.status}): ${errText}`)
+  }
+
+  const data = await res.json() as any
+  const translation = data.translations?.[0]
+  if (!translation)
+    throw new Error('DeepL returned empty translation')
+
+  return {
+    original: text,
+    translated: translation.text,
+    from: (translation.detected_source_language?.toLowerCase() as LanguageCode) || from,
+    to,
+  }
+}
+
+async function getDeeplApiKey(): Promise<string | undefined> {
+  try {
+    const raycast = await import('@raycast/api')
+    return (raycast.getPreferenceValues() as any)?.deeplApiKey
+  }
+  catch {
+    return process.env.DEEPL_API_KEY
+  }
+}
+
+export async function translate(
+  text: string,
+  from: LanguageCode,
+  to: LanguageCode,
+  apiKey?: string,
+): Promise<TranslateResult> {
   if (!text) {
     return {
       original: text,
@@ -36,6 +120,18 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
   const cached = cache.get(key)
   if (cached)
     return cached
+
+  const deeplKey = apiKey || (await getDeeplApiKey())
+  if (deeplKey) {
+    try {
+      const result = await translateWithDeepL(text, from, to, deeplKey)
+      cache.set(key, result)
+      return result
+    }
+    catch (e) {
+      console.warn('DeepL translation failed, falling back to Google Translate:', e)
+    }
+  }
 
   try {
     const translated = await googleTranslate(text, {
@@ -68,11 +164,16 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
   }
 }
 
-export async function translateAll(text: string, from: LanguageCode = 'auto', languages: LanguageCode[]) {
+export async function translateAll(
+  text: string,
+  from: LanguageCode = 'auto',
+  languages: LanguageCode[],
+  apiKey?: string,
+) {
   if (!text)
     return []
 
-  const result = (await Promise.all(languages.map(async to => translate(text, from, to)))).filter(i => i.translated)
+  const result = (await Promise.all(languages.map(async to => translate(text, from, to, apiKey)))).filter(i => i.translated)
 
   const fromLangs = new Set(result?.map(i => i.from))
   const singleSource = fromLangs.size === 1
