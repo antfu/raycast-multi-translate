@@ -46,6 +46,10 @@ When you misspell some words, an additional item will be listed, with diffing su
 
 <img width="862" src="https://github.com/antfu/raycast-multi-translate/assets/11247099/ca5ea47a-3d8f-4657-83c1-4955798564fe">
 
+### Translation Providers
+
+By default, translations are provided by Google Translate. You can optionally switch to [DeepL](https://www.deepl.com/pro-api) in the extension preferences by selecting it as the translation provider and providing your own DeepL API key (bring your own key). Both DeepL API Free keys (ending with `:fx`) and Pro keys are supported. Note that DeepL supports fewer languages than Google Translate — target languages that DeepL does not support are skipped when the DeepL provider is selected.
+
 ### Source Language Detection
 
 By default we send the text to Google Translate and let it detect the source language automatically. In some cases, it might not be accurate because different works in different languages can spell the same. For example, `ours` in French means `bear`, but in English, it means `belonging to us`. In this case, if you want to translate `ours` in French, you can add `>fr` to the end of the text to force the source language to be French.
