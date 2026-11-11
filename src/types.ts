@@ -23,3 +23,13 @@ export interface WebDictionary {
   sentence?: boolean
   url: (text: string, result: TranslateResult) => string | void
 }
+
+export interface Preferences {
+  getSystemSelection?: boolean
+  lang1?: LanguageCode
+  lang2?: LanguageCode
+  lang3?: LanguageCode
+  lang4?: LanguageCode
+  deeplApiKey?: string
+  deeplPro?: boolean
+}
