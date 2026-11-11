@@ -3153,6 +3153,22 @@
       ],
       "required": false,
       "default": "none"
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "Optional API Key for DeepL translation (Free or Pro)",
+      "required": false
+    },
+    {
+      "name": "deeplPro",
+      "type": "checkbox",
+      "title": "DeepL Pro",
+      "label": "Use DeepL Pro endpoint",
+      "description": "Enable if using a paid DeepL Pro subscription (api.deepl.com)",
+      "default": false,
+      "required": false
     }
   ],
   "scripts": {
