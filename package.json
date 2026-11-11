@@ -2,23 +2,23 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "multitranslate",
   "title": "MultiTranslate",
-  "private": true,
   "type": "module",
+  "private": true,
   "packageManager": "pnpm@10.13.1",
   "description": "Translates text to multiple languages at once",
   "author": "antfu",
-  "license": "MIT",
-  "categories": [
-    "Productivity",
-    "Communication"
-  ],
-  "icon": "icon.png",
   "contributors": [
     "gebeto",
     "FezVrasta",
     "metakirby5",
     "AlanHuang"
   ],
+  "license": "MIT",
+  "categories": [
+    "Productivity",
+    "Communication"
+  ],
+  "icon": "icon.png",
   "commands": [
     {
       "name": "translate",
@@ -35,6 +35,31 @@
       "required": true,
       "label": "Read system text selection",
       "description": "Automatically get current text selection and translate"
+    },
+    {
+      "name": "useDeepl",
+      "type": "checkbox",
+      "required": false,
+      "title": "Use DeepL API",
+      "label": "Enable DeepL API when supported",
+      "description": "Use DeepL API for translation when API key is configured",
+      "default": false
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "required": false,
+      "title": "DeepL API Key",
+      "description": "DeepL API Auth Key"
+    },
+    {
+      "name": "deeplPro",
+      "type": "checkbox",
+      "required": false,
+      "title": "DeepL Pro Account",
+      "label": "Use DeepL Pro endpoint (api.deepl.com)",
+      "description": "Enable if using a DeepL Pro API key instead of DeepL Free",
+      "default": false
     },
     {
       "name": "lang1",
