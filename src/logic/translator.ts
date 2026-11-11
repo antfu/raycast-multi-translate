@@ -1,9 +1,27 @@
-import googleTranslate from '@iamtraction/google-translate'
-import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
+import googleTranslate from '@iamtraction/google-translate'
+import { getPreferenceValues } from '@raycast/api'
+import { LRUCache } from 'lru-cache'
 
 export const AUTO_DETECT = 'auto'
+
+const DEEPL_TARGET_MAP: Record<string, string> = {
+  'en': 'EN-US',
+  'pt': 'PT-PT',
+  'zh-CN': 'ZH-HANS',
+  'zh-TW': 'ZH-HANT',
+}
+
+export function normalizeDeeplTarget(code: string): string {
+  return DEEPL_TARGET_MAP[code] || code.toUpperCase()
+}
+
+export function resolveDeeplHost(apiKey: string, deeplPro?: boolean): string {
+  if (apiKey.trim().endsWith(':fx'))
+    return 'https://api-free.deepl.com'
+  return deeplPro ? 'https://api.deepl.com' : 'https://api-free.deepl.com'
+}
 
 const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
@@ -32,10 +50,58 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
     }
   }
 
-  const key = `${from}:${to}:${text}`
+  const { useDeepl, deeplApiKey, deeplPro } = getPreferenceValues<Preferences.Translate>()
+  const trimmedKey = deeplApiKey?.trim()
+
+  const providerPrefix = useDeepl && trimmedKey ? 'deepl' : 'google'
+  const key = `${providerPrefix}:${from}:${to}:${text}`
   const cached = cache.get(key)
   if (cached)
     return cached
+
+  if (useDeepl && trimmedKey) {
+    try {
+      const host = resolveDeeplHost(trimmedKey, deeplPro)
+      const body: Record<string, unknown> = {
+        text: [text],
+        target_lang: normalizeDeeplTarget(to),
+      }
+      if (from && from !== AUTO_DETECT)
+        body.source_lang = from.split('-')[0].toUpperCase()
+
+      const response = await fetch(`${host}/v2/translate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `DeepL-Auth-Key ${trimmedKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+
+      if (response.ok) {
+        const data = (await response.json()) as {
+          translations?: Array<{
+            text: string
+            detected_source_language?: string
+          }>
+        }
+        const first = data.translations?.[0]
+        if (first) {
+          const result: TranslateResult = {
+            original: text,
+            translated: first.text,
+            from: (first.detected_source_language?.toLowerCase() || from) as LanguageCode,
+            to,
+          }
+          cache.set(key, result)
+          return result
+        }
+      }
+    }
+    catch {
+      // Fallback to Google Translate if DeepL fails or does not support the language pair
+    }
+  }
 
   try {
     const translated = await googleTranslate(text, {
