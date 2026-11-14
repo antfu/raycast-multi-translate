@@ -37,6 +37,31 @@
       "description": "Automatically get current text selection and translate"
     },
     {
+      "name": "serviceProvider",
+      "type": "dropdown",
+      "title": "Translation Service",
+      "description": "Choose translation provider (Google Translate or DeepL API)",
+      "default": "google",
+      "required": true,
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL API",
+          "value": "deepl"
+        }
+      ]
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "title": "DeepL API Key",
+      "description": "DeepL API Key (required when DeepL API is selected; supports both Free :fx and Pro keys)",
+      "required": false
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",
