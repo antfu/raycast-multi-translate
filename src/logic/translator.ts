@@ -1,13 +1,17 @@
 import googleTranslate from '@iamtraction/google-translate'
+import { getPreferenceValues } from '@raycast/api'
 import { LRUCache } from 'lru-cache'
 import type { LanguageCode } from '../data/languages'
 import type { TranslateResult } from '../types'
+import { DeepLUnsupportedLanguageError, supportsDeepL, translateWithDeepL } from './deepl'
 
 export const AUTO_DETECT = 'auto'
 
 const cache = new LRUCache<string, TranslateResult>({
   max: 1000,
 })
+
+const { deeplApiKey } = getPreferenceValues<Preferences.Translate>()
 
 export class TranslateError extends Error {
   constructor(message?: string | Error, name?: string) {
@@ -32,10 +36,27 @@ export async function translate(text: string, from: LanguageCode, to: LanguageCo
     }
   }
 
-  const key = `${from}:${to}:${text}`
+  const key = `${deeplApiKey ? 'deepl' : 'google'}:${from}:${to}:${text}`
   const cached = cache.get(key)
   if (cached)
     return cached
+
+  // DeepL BYOK: use it when a key is configured and the target is supported;
+  // unsupported language pairs fall back to Google Translate transparently.
+  if (deeplApiKey && supportsDeepL(to)) {
+    try {
+      const result = await translateWithDeepL(text, from, to, deeplApiKey)
+      cache.set(key, result)
+      return result
+    }
+    catch (err) {
+      if (!(err instanceof DeepLUnsupportedLanguageError)) {
+        if (err instanceof Error)
+          throw new TranslateError(err)
+        throw err
+      }
+    }
+  }
 
   try {
     const translated = await googleTranslate(text, {
