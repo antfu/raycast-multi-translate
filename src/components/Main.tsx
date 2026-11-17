@@ -5,7 +5,7 @@ import { usePromise } from '@raycast/utils'
 import type { LanguageCode } from '../data/languages'
 import { getLanguageName, languages, languagesByCode } from '../data/languages'
 import { translateAll } from '../logic/translator'
-import { targetLanguages, useDebouncedValue, useSystemSelection } from '../logic/hooks'
+import { targetLanguages, translationOptions, useDebouncedValue, useSystemSelection } from '../logic/hooks'
 import { unicodeTransform } from '../logic/text'
 import { spellcheck } from '../logic/spellcheck'
 import { webDictionaries } from '../data/web-dictionaries'
@@ -43,7 +43,7 @@ export function Main(): ReactElement {
 
   const { data: results, isLoading } = usePromise(
     translateAll,
-    [debouncedText, langFrom, langs],
+    [debouncedText, langFrom, langs, translationOptions],
     {
       onError(error) {
         showToast({
