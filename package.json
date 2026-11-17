@@ -37,6 +37,32 @@
       "description": "Automatically get current text selection and translate"
     },
     {
+      "name": "provider",
+      "type": "dropdown",
+      "default": "google",
+      "required": true,
+      "title": "Translation Provider",
+      "description": "Translation service provider",
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL API (BYOK)",
+          "value": "deepl"
+        }
+      ]
+    },
+    {
+      "name": "deeplApiKey",
+      "type": "password",
+      "required": false,
+      "title": "DeepL API Key",
+      "placeholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:fx",
+      "description": "DeepL API key (Free :fx or Pro), required when DeepL API is selected"
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",
@@ -3162,7 +3188,8 @@
     "postinstall": "pnpm run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "prepare": "tsx scripts/prepare.ts"
+    "prepare": "tsx scripts/prepare.ts",
+    "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
