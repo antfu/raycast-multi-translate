@@ -37,6 +37,41 @@
       "description": "Automatically get current text selection and translate"
     },
     {
+      "name": "provider",
+      "type": "dropdown",
+      "title": "Translation provider",
+      "description": "Provider used for translations",
+      "required": true,
+      "default": "google",
+      "data": [
+        {
+          "title": "Google Translate",
+          "value": "google"
+        },
+        {
+          "title": "DeepL",
+          "value": "deepl"
+        }
+      ]
+    },
+    {
+      "name": "deepLApiKey",
+      "type": "password",
+      "title": "DeepL API key",
+      "description": "DeepL API authentication key (BYOK). Required when the provider is DeepL.",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "deepLFreeApi",
+      "type": "checkbox",
+      "title": "DeepL free API",
+      "label": "Use the free DeepL API endpoint",
+      "description": "Use api-free.deepl.com (DeepL API Free). Uncheck for a DeepL API Pro key.",
+      "required": false,
+      "default": true
+    },
+    {
       "name": "lang1",
       "type": "dropdown",
       "title": "Language 1",
